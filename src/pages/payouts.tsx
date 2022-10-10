@@ -21,6 +21,7 @@ import {
   ModalHeader,
   ModalOverlay,
   useDisclosure,
+  Spinner,
   FormLabel,
   useToast,
 } from "@chakra-ui/react";
@@ -82,9 +83,18 @@ function Payouts({
         setLoading(true);
         const add = await Single({ args: [token, editor, amountParsed] });
         setLoading(false);
-        await add.wait();
         onClose();
-        let toastTitle = "Payout done successfully";
+        let toastTitle = "Please wait Payment is pending";
+
+        toast({
+          title: toastTitle,
+          status: "loading",
+          duration: 5000,
+          isClosable: true,
+        });
+
+        await add.wait();
+        toastTitle = "Payout done successfully";
 
         toast({
           title: toastTitle,
@@ -174,9 +184,16 @@ function Payouts({
               _hover={{ bg: "gray.100", color: "black" }}
               mr={3}
             >
-              Send
+              {loading ? <Spinner size="sm" color="white" /> : "Send"}
             </Button>
-            <Button onClick={onClose}>Cancel</Button>
+            <Button
+              onClick={() => {
+                setLoading(false);
+                onClose();
+              }}
+            >
+              Cancel
+            </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
@@ -219,7 +236,7 @@ function Payouts({
                     <>
                       <Td>{shortenAccount(payout.Receiver)}</Td>
                       <Td>{payout.Date}</Td>
-                      <Td>{payout.Reward}</Td>
+                      <Td>{utils.formatEther(payout.Rewards)}</Td>
                     </>
                   </Tr>
                 );

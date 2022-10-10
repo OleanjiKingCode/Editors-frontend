@@ -3,6 +3,6 @@ export type PAYOUTS_LIST = {
   Receiver: string;
   Sender: string;
   Date: string;
-  Reward: number;
+  Rewards: number;
   TokenAddress: string;
 };
