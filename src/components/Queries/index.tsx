@@ -1,6 +1,6 @@
 export const GET_PAYOUTS_LISTS = `
 query {
-    payoutsRecords{
+    payoutsRecords(orderBy:Rewards orderDirection:desc){
         id
         Sender
         Receiver
@@ -20,3 +20,12 @@ query {
     }
 }
 `;
+
+export const GET_EDITORS_LIST = `
+query {
+ editors(orderBy:TotalRewards orderDirection:desc){
+    id
+    Address
+    TotalRewards
+  }
+}`;

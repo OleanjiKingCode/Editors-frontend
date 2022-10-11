@@ -24,12 +24,14 @@ import {
   Spinner,
   FormLabel,
   useToast,
+  Tooltip,
 } from "@chakra-ui/react";
 import { InferGetServerSidePropsType } from "next";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import shortenAccount from "../utils/shortenAccount";
 import { PAYOUTS_LIST } from "../types/payoutsType";
-import { GET_PAYOUTS_LISTS } from "../components/Queries";
+import { PAYERS_LIST } from "../types/payersType";
+import { GET_PAYOUTS_LISTS, GET_PAYERS_LISTS } from "../components/Queries";
 import { BigNumber, Signer, utils, constants, Contract } from "ethers";
 import { useAccount, useContractWrite } from "wagmi";
 import { config } from "../config/index";
@@ -41,24 +43,49 @@ const client = createClient({
 
 export const getServerSideProps = async () => {
   const info = await client.query(GET_PAYOUTS_LISTS, undefined).toPromise();
+  const payersInfo = await client
+    .query(GET_PAYERS_LISTS, undefined)
+    .toPromise();
   const data: PAYOUTS_LIST[] = info.data?.payoutsRecords;
+  const payersData: PAYERS_LIST[] = payersInfo.data?.payers;
   return {
     props: {
       payoutsData: data ? data : [],
+      payersData,
     },
   };
 };
 
 function Payouts({
   payoutsData,
+  payersData,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [loading, setLoading] = useState(false);
+  const [isAnEditor, setIsAnEditor] = useState(false);
   const [tokenAddress, setTokenAddress] = useState("");
   const [amount, setAmount] = useState("");
   const [editorAddress, setEditorAddress] = useState("");
   const { address: currentUser, isConnected: isUserConnected } = useAccount();
   const toast = useToast();
+  const [updated, isUpdated] = useState(false);
+
+  const checkIfAddressIsEditor = async () => {
+    const addresses = [""];
+    const tx = await Promise.all(
+      payersData.map(async (i) => {
+        addresses.push(i.Address);
+        return addresses;
+      })
+    );
+    const Address = currentUser?.toLowerCase();
+    const isThere = addresses.includes(Address ? Address : "");
+    setIsAnEditor(isThere);
+  };
+
+  useEffect(() => {
+    checkIfAddressIsEditor();
+  }, [updated, currentUser, payersData]);
 
   const { writeAsync: Single } = useContractWrite({
     addressOrName: config.PayoutsContractAddress,
@@ -72,6 +99,13 @@ function Payouts({
     functionName: "multiplePayout",
   });
 
+  // const renderButton = () => {
+  //   if (isAnEditor) {
+  //     return (
+
+  //     );
+  //   }
+  // };
   const singlePayoutAction = async (
     editor: string,
     amount: string,
@@ -94,6 +128,7 @@ function Payouts({
         });
 
         await add.wait();
+        isUpdated(true);
         toastTitle = "Payout done successfully";
 
         toast({
@@ -123,6 +158,24 @@ function Payouts({
     }
   };
 
+  const dateConverter = (date: string) => {
+    let newDate = parseInt(date);
+    newDate = newDate * 1000;
+    let result = new Date(newDate);
+    let new_result =
+      result.getDate() +
+      "/" +
+      (result.getMonth() + 1) +
+      "/" +
+      result.getFullYear() +
+      " " +
+      result.getHours() +
+      ":" +
+      result.getMinutes() +
+      ":" +
+      result.getSeconds();
+    return new_result;
+  };
   return (
     <Box pt={10} mx={18}>
       <Flex direction="column" gap="6" pt="2" px={15} mb="8">
@@ -200,18 +253,29 @@ function Payouts({
 
       <Flex direction="column" alignItems="center" justifyContent="center">
         <chakra.div overflowX="auto" fontSize="sm" w="90%" textAlign="end">
-          <Button
-            onClick={onOpen}
-            fontSize="sm"
-            px="4"
-            my="4"
-            fontWeight="medium"
-            bg="#FF5CAA"
-            color="white"
-            _hover={{ bg: "gray.100", color: "black" }}
+          <Tooltip
+            label={
+              isAnEditor
+                ? "make payments to editors"
+                : "you cannot make payments"
+            }
+            bg="blackAlpha.600"
+            rounded="xl"
           >
-            Make New Payment
-          </Button>
+            <Button
+              onClick={onOpen}
+              disabled={!isAnEditor}
+              fontSize="sm"
+              px="4"
+              my="4"
+              fontWeight="medium"
+              bg="#FF5CAA"
+              color="white"
+              _hover={{ bg: "gray.100", color: "black" }}
+            >
+              Make New Payment
+            </Button>
+          </Tooltip>
         </chakra.div>
         <chakra.div
           overflowX="auto"
@@ -235,7 +299,7 @@ function Payouts({
                   <Tr key={i}>
                     <>
                       <Td>{shortenAccount(payout.Receiver)}</Td>
-                      <Td>{payout.Date}</Td>
+                      <Td>{dateConverter(payout.Date)}</Td>
                       <Td>{utils.formatEther(payout.Rewards)}</Td>
                     </>
                   </Tr>

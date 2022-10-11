@@ -10,9 +10,7 @@ import {
   Spacer,
   Box,
   FlexProps,
-  LinkOverlay,
   Text,
-  chakra,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { FaChevronDown } from "react-icons/fa";
@@ -48,7 +46,7 @@ export const Navbar = (props: FlexProps) => {
         <NextLink href="/" passHref>
           <Flex as="a" alignItems="center" gap="3" cursor="pointer">
             <BraindaoLogo />
-            <Text fontWeight="bold" fontSize={{base:'sm', md:'lg'}}>
+            <Text fontWeight="bold" fontSize={{ base: "sm", md: "lg" }}>
               Editors Payouts
             </Text>
           </Flex>
@@ -58,8 +56,8 @@ export const Navbar = (props: FlexProps) => {
           <Text
             fontWeight="bold"
             as="a"
-            fontSize={{base:'sm', md:'lg'}}
-            px={{base:'2',md:'4'}}
+            fontSize={{ base: "sm", md: "lg" }}
+            px={{ base: "2", md: "4" }}
             py={2}
             rounded="lg"
             _hover={{ bg: "gray.300", color: "black" }}
@@ -71,13 +69,13 @@ export const Navbar = (props: FlexProps) => {
           <Text
             fontWeight="bold"
             as="a"
-            fontSize={{base:'sm', md:'lg'}}
-            px={{base:'2',md:'4'}}
+            fontSize={{ base: "sm", md: "lg" }}
+            px={{ base: "2", md: "4" }}
             py={2}
             rounded="lg"
             _hover={{ bg: "gray.300", color: "black" }}
           >
-            Lists
+            Payers Lists
           </Text>
         </NextLink>
 

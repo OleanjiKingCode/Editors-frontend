@@ -6,3 +6,9 @@ export type PAYOUTS_LIST = {
   Rewards: number;
   TokenAddress: string;
 };
+
+export type EDITORS_LIST = {
+  id: string;
+  Address: string;
+  TotalRewards: number;
+};
