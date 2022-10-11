@@ -29,8 +29,7 @@ import {
 import { InferGetServerSidePropsType } from "next";
 import React, { useState, useEffect } from "react";
 import shortenAccount from "../utils/shortenAccount";
-import { PAYOUTS_LIST } from "../types/payoutsType";
-import { PAYERS_LIST } from "../types/payersType";
+import { PAYOUTS_LIST, PAYERS_LIST } from "../types/payoutsType";
 import { GET_PAYOUTS_LISTS, GET_PAYERS_LISTS } from "../components/Queries";
 import { BigNumber, Signer, utils, constants, Contract } from "ethers";
 import { useAccount, useContractWrite } from "wagmi";
@@ -99,13 +98,7 @@ function Payouts({
     functionName: "multiplePayout",
   });
 
-  // const renderButton = () => {
-  //   if (isAnEditor) {
-  //     return (
-
-  //     );
-  //   }
-  // };
+  
   const singlePayoutAction = async (
     editor: string,
     amount: string,

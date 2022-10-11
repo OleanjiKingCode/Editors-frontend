@@ -23,33 +23,38 @@ import {
   useDisclosure,
   Spinner,
   useToast,
+  Tooltip,
 } from "@chakra-ui/react";
 import { InferGetServerSidePropsType } from "next";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import shortenAccount from "../utils/shortenAccount";
 import { utils } from "ethers";
 import { useAccount, useContract, useContractWrite, useProvider } from "wagmi";
-import { PAYERS_LIST } from "../types/payersType";
-import { GET_PAYERS_LISTS } from "../components/Queries";
+import { PAYERS_LIST,OWNER } from "../types/payoutsType";
+import { GET_PAYERS_LISTS, GET_OWNER } from "../components/Queries";
 import { config } from "../config/index";
 import { payoutAbi } from "../abis/payouts";
-import { createClient } from 'urql';
+import { createClient } from "urql";
 const client = createClient({
   url: config.PayoutsGraphApi,
 });
 
 export const getServerSideProps = async () => {
   const info = await client.query(GET_PAYERS_LISTS, undefined).toPromise();
+  const Ownerinfo = await client.query(GET_OWNER, undefined).toPromise();
   const data: PAYERS_LIST[] = info.data?.payers;
+  const Ownerdata: OWNER[] = Ownerinfo.data?.owners;
   return {
     props: {
       listData: data ? data : [],
+      Ownerdata,
     },
   };
 };
 
 function Lists({
   listData,
+  Ownerdata,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
@@ -65,6 +70,7 @@ function Lists({
   const [loading, setLoading] = useState(false);
   const { address: currentUser, isConnected: isUserConnected } = useAccount();
   const toast = useToast();
+  const [isAnOwner, setIsAnOwner] = useState(false);
 
   const { writeAsync: addAddress } = useContractWrite({
     addressOrName: config.PayoutsContractAddress,
@@ -83,6 +89,21 @@ function Lists({
     functionName: "removeAddress",
   });
 
+  const checkIfAddressIsOwner= async () => {
+    const addresses = [""];
+    const tx = await Promise.all(
+      Ownerdata.map(async (i) => {
+        addresses.push(i.Address);
+        return addresses;
+      })
+    );
+    const Address = currentUser?.toLowerCase();
+    const isThere = addresses.includes(Address ? Address : "");
+    setIsAnOwner(isThere);
+  };
+  useEffect(() => {
+    checkIfAddressIsOwner();
+  }, [currentUser, Ownerdata]);
   const addAddressToList = async (address: string) => {
     if (isUserConnected) {
       setLoading(true);
@@ -233,9 +254,19 @@ function Lists({
         pb="20"
       >
         <chakra.div overflowX="auto" fontSize="sm" w="90%" textAlign="end">
+        <Tooltip
+            label={
+              isAnOwner
+                ? "add new payer"
+                : "you cannot add a new payer"
+            }
+            bg="blackAlpha.600"
+            rounded="xl"
+          >
           <Button
             onClick={onOpen}
             fontSize="sm"
+            disabled={!isAnOwner}
             px="4"
             my="4"
             fontWeight="medium"
@@ -245,6 +276,7 @@ function Lists({
           >
             Add New Payer
           </Button>
+          </Tooltip>
         </chakra.div>
         <chakra.div
           overflowX="auto"

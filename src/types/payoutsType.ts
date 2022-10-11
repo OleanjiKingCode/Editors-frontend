@@ -12,3 +12,16 @@ export type EDITORS_LIST = {
   Address: string;
   TotalRewards: number;
 };
+
+
+export type OWNER = {
+  id: string;
+  Address: string;
+  TotalRewards: number;
+};
+
+export type PAYERS_LIST = {
+  id: string;
+  Deleted: boolean;
+  Address: string;
+};

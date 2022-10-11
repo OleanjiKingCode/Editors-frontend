@@ -29,3 +29,12 @@ query {
     TotalRewards
   }
 }`;
+
+
+export const GET_OWNER = `
+query {
+    owners (first:1) {
+        id
+        Address
+      }
+}`;
