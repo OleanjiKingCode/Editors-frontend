@@ -56,8 +56,8 @@ export const Navbar = (props: FlexProps) => {
           <Text
             fontWeight="bold"
             as="a"
-            fontSize={{ base: "sm", md: "lg" }}
-            px={{ base: "2", md: "4" }}
+            fontSize={{ base: "sm", md: "md", xl:'lg' }}
+            px={{ base: "2", xl: "4" }}
             py={2}
             rounded="lg"
             _hover={{ bg: "gray.300", color: "black" }}
@@ -69,8 +69,8 @@ export const Navbar = (props: FlexProps) => {
           <Text
             fontWeight="bold"
             as="a"
-            fontSize={{ base: "sm", md: "lg" }}
-            px={{ base: "2", md: "4" }}
+            fontSize={{ base: "sm", md: "md", xl:'lg' }}
+            px={{ base: "2", xl: "4" }}
             py={2}
             rounded="lg"
             _hover={{ bg: "gray.300", color: "black" }}

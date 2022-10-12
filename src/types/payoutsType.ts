@@ -25,3 +25,8 @@ export type PAYERS_LIST = {
   Deleted: boolean;
   Address: string;
 };
+
+export type TableType = {
+  address:string; 
+  amount:string;
+};

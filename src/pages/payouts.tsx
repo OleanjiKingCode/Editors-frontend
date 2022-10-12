@@ -25,17 +25,20 @@ import {
   FormLabel,
   useToast,
   Tooltip,
+  HStack,
+  VStack,
 } from "@chakra-ui/react";
 import { InferGetServerSidePropsType } from "next";
 import React, { useState, useEffect } from "react";
 import shortenAccount from "../utils/shortenAccount";
-import { PAYOUTS_LIST, PAYERS_LIST } from "../types/payoutsType";
+import { PAYOUTS_LIST, PAYERS_LIST, TableType } from "../types/payoutsType";
 import { GET_PAYOUTS_LISTS, GET_PAYERS_LISTS } from "../components/Queries";
 import { BigNumber, Signer, utils, constants, Contract } from "ethers";
 import { useAccount, useContractWrite } from "wagmi";
 import { config } from "../config/index";
 import { payoutAbi } from "../abis/payouts";
 import { createClient } from "urql";
+import { TransactionResponse } from "@ethersproject/providers";
 const client = createClient({
   url: config.PayoutsGraphApi,
 });
@@ -67,6 +70,8 @@ function Payouts({
   const [editorAddress, setEditorAddress] = useState("");
   const { address: currentUser, isConnected: isUserConnected } = useAccount();
   const toast = useToast();
+
+  const [table, setTable] = useState<TableType[]>([]);
   const [updated, isUpdated] = useState(false);
 
   const checkIfAddressIsEditor = async () => {
@@ -98,50 +103,90 @@ function Payouts({
     functionName: "multiplePayout",
   });
 
-  
-  const singlePayoutAction = async (
-    editor: string,
-    amount: string,
-    token: string
-  ) => {
-    const amountParsed = utils.parseUnits(amount);
-    if (utils.isAddress(editor) && utils.isAddress(token) && amountParsed) {
-      if (isUserConnected) {
-        setLoading(true);
-        const add = await Single({ args: [token, editor, amountParsed] });
-        setLoading(false);
-        onClose();
-        let toastTitle = "Please wait Payment is pending";
-
-        toast({
-          title: toastTitle,
-          status: "loading",
-          duration: 5000,
-          isClosable: true,
-        });
-
-        await add.wait();
-        isUpdated(true);
-        toastTitle = "Payout done successfully";
-
-        toast({
-          title: toastTitle,
-          status: "success",
-          duration: 5000,
-          isClosable: true,
-        });
-      } else {
-        let toastTitle = "You are not connected, Connect your wallet";
-
-        toast({
-          title: toastTitle,
-          status: "error",
-          duration: 5000,
-          isClosable: true,
-        });
-      }
+  const tempTable = (address: string, amount: string) => {
+    if (!address && !amount) {
+      toast({
+        title: "Fill the forms correctly",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+    const isInthere = table.find((elem) => elem.address == address);
+    if (isInthere) {
+      toast({
+        title: "Duplicated data not supported",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
     } else {
-      let toastTitle = "  Please fill the fields with valid data";
+      let temporaryTable: TableType = { address, amount };
+      console.log(table);
+      setTable([...table, { ...temporaryTable }]);
+    }
+  };
+
+  const removeData = (address: string) => {
+    const newTable = table.filter((item) => {
+      return item.address !== address;
+    });
+    setTable(newTable);
+  };
+
+  const PayoutAction = async (data: TableType[], token: string) => {
+    if (isUserConnected) {
+      const addresses = [""];
+      const amounts: BigNumber[] = [];
+      let tx: TransactionResponse;
+      data.map((td) => {
+        if (utils.isAddress(td.address) && utils.isAddress(token)) {
+          addresses.push(td.address);
+          let newAmount = utils.parseUnits(td.amount);
+          amounts.push(newAmount);
+        } else {
+          let toastTitle = "  Please fill the fields with valid data";
+          toast({
+            title: toastTitle,
+            status: "error",
+            duration: 5000,
+            isClosable: true,
+          });
+        }
+      });
+
+      if (addresses.length == 1 && amounts.length == 1) {
+        setLoading(true);
+
+        tx = await Single({ args: [token, addresses[0], amounts[0]] });
+        setLoading(false);
+      } else {
+        setLoading(true);
+        tx = await Multiple({ args: [token, addresses, amounts] });
+        setLoading(false);
+      }
+      await tx.wait();
+      onClose();
+      let toastTitle = "Please wait Payment is pending";
+
+      toast({
+        title: toastTitle,
+        status: "loading",
+        duration: 5000,
+        isClosable: true,
+      });
+      isUpdated(true);
+      toastTitle = "Payout done successfully";
+
+      toast({
+        title: toastTitle,
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
+    } else {
+      let toastTitle = "You are not connected, Connect your wallet";
+
       toast({
         title: toastTitle,
         status: "error",
@@ -186,7 +231,7 @@ function Payouts({
         </Flex>
       </Flex>
 
-      <Modal isOpen={isOpen} onClose={onClose}>
+      <Modal isOpen={isOpen} onClose={onClose} size="2xl">
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Making Payouts</ModalHeader>
@@ -202,21 +247,83 @@ function Payouts({
             </FormControl>
 
             <FormControl mt={4}>
-              <FormLabel>Receiver&apos;s Address </FormLabel>
-              <Input
-                type="text"
-                placeholder="Enter wallet address "
-                onChange={(e) => setEditorAddress(e.target.value)}
-              />
-              <FormLabel>Amount of tokens </FormLabel>
-              <Input
-                type="text"
-                placeholder="Enter amount of tokens "
-                onChange={(e) => setAmount(e.target.value)}
-              />
+              <HStack w="full">
+                <VStack w="90%">
+                  <FormLabel textAlign="left" w="inherit">
+                    Receiver&apos;s Address{" "}
+                  </FormLabel>
+                  <Input
+                    type="text"
+                    placeholder="Enter wallet address "
+                    onChange={(e) => setEditorAddress(e.target.value)}
+                  />
+                </VStack>
+                <VStack>
+                  <FormLabel textAlign="left" w="inherit">
+                    Amount of tokens{" "}
+                  </FormLabel>
+                  <Input
+                    type="text"
+                    placeholder="Enter amount of tokens "
+                    onChange={(e) => setAmount(e.target.value)}
+                  />
+                </VStack>
+                <Button
+                  alignSelf="end"
+                  onClick={() => tempTable(editorAddress, amount)}
+                >
+                  +
+                </Button>
+              </HStack>
             </FormControl>
-          </ModalBody>
 
+            {table.length > 0 && (
+              <chakra.div
+                overflowX="auto"
+                border="solid 1px"
+                borderColor="divider2"
+                rounded="lg"
+                fontSize="sm"
+                w="full"
+                mt="5"
+              >
+                <Table size="md" variant="striped" colorScheme={"gray"} p="10">
+                  <Thead>
+                    <Tr>
+                      <Th>Editors Address</Th>
+                      <Th> Amount</Th>
+                      <Th>Action</Th>
+                    </Tr>
+                  </Thead>
+                  <Tbody p="3">
+                    {table?.map((tb, i) => {
+                      return (
+                        <Tr key={i} p="3">
+                          <>
+                            <Td>{shortenAccount(tb.address)}</Td>
+                            <Td>{tb.amount}</Td>
+                            <Td>
+                              <Button
+                                onClick={() => removeData(tb.address)}
+                                fontSize="sm"
+                                px="4"
+                                my="4"
+                                fontWeight="medium"
+                                bg="red.500"
+                                color="white"
+                              >
+                                Remove
+                              </Button>
+                            </Td>
+                          </>
+                        </Tr>
+                      );
+                    })}
+                  </Tbody>
+                </Table>
+              </chakra.div>
+            )}
+          </ModalBody>
           <ModalFooter>
             <Button
               fontSize="sm"
@@ -224,9 +331,7 @@ function Payouts({
               fontWeight="medium"
               bg="#FF5CAA"
               color="white"
-              onClick={() =>
-                singlePayoutAction(editorAddress, amount, tokenAddress)
-              }
+              // onClick={() => PayoutAction(table, token)}
               _hover={{ bg: "gray.100", color: "black" }}
               mr={3}
             >
@@ -247,11 +352,7 @@ function Payouts({
       <Flex direction="column" alignItems="center" justifyContent="center">
         <chakra.div overflowX="auto" fontSize="sm" w="90%" textAlign="end">
           <Tooltip
-            label={
-              isAnEditor
-                ? "make payments to editors"
-                : "you cannot make payments"
-            }
+            label={!isAnEditor && "you cannot make payments"}
             bg="blackAlpha.600"
             rounded="xl"
           >
@@ -264,7 +365,7 @@ function Payouts({
               fontWeight="medium"
               bg="#FF5CAA"
               color="white"
-              _hover={{ bg: "gray.100", color: "black" }}
+              _hover={isAnEditor ? { bg: "gray.100", color: "black" } : {}}
             >
               Make New Payment
             </Button>

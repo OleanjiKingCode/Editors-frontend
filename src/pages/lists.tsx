@@ -30,7 +30,7 @@ import React, { useState, useEffect } from "react";
 import shortenAccount from "../utils/shortenAccount";
 import { utils } from "ethers";
 import { useAccount, useContract, useContractWrite, useProvider } from "wagmi";
-import { PAYERS_LIST,OWNER } from "../types/payoutsType";
+import { PAYERS_LIST, OWNER } from "../types/payoutsType";
 import { GET_PAYERS_LISTS, GET_OWNER } from "../components/Queries";
 import { config } from "../config/index";
 import { payoutAbi } from "../abis/payouts";
@@ -89,7 +89,7 @@ function Lists({
     functionName: "removeAddress",
   });
 
-  const checkIfAddressIsOwner= async () => {
+  const checkIfAddressIsOwner = async () => {
     const addresses = [""];
     const tx = await Promise.all(
       Ownerdata.map(async (i) => {
@@ -254,28 +254,24 @@ function Lists({
         pb="20"
       >
         <chakra.div overflowX="auto" fontSize="sm" w="90%" textAlign="end">
-        <Tooltip
-            label={
-              isAnOwner
-                ? "add new payer"
-                : "you cannot add a new payer"
-            }
+          <Tooltip
+            label={!isAnOwner && "You cannot add a new payer"}
             bg="blackAlpha.600"
             rounded="xl"
           >
-          <Button
-            onClick={onOpen}
-            fontSize="sm"
-            disabled={!isAnOwner}
-            px="4"
-            my="4"
-            fontWeight="medium"
-            bg="#FF5CAA"
-            color="white"
-            _hover={{ bg: "gray.100", color: "black" }}
-          >
-            Add New Payer
-          </Button>
+            <Button
+              onClick={onOpen}
+              fontSize="sm"
+              disabled={!isAnOwner}
+              px="4"
+              my="4"
+              fontWeight="medium"
+              bg="#FF5CAA"
+              color="white"
+              _hover={isAnOwner ? { bg: "gray.100", color: "black" } : {}}
+            >
+              Add New Payer
+            </Button>
           </Tooltip>
         </chakra.div>
         <chakra.div
@@ -299,7 +295,7 @@ function Lists({
                   <Tr key={i}>
                     {!payer.Deleted && (
                       <>
-                        <Td>{payer.Address}</Td>
+                        <Td>{shortenAccount(payer.Address)}</Td>
                         <Td>
                           <Button
                             fontSize="sm"
