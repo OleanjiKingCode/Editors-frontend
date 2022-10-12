@@ -1,12 +1,28 @@
 import StakeCard from "../StakeCard";
-
+import { BigNumber, Signer, utils, constants, Contract } from "ethers";
 import { Heading, Text, SimpleGrid, Box } from "@chakra-ui/react";
-import React from "react";
+import React, { useState } from "react";
+import { PAYOUTS_LIST, EDITORS_LIST } from "../../types/payoutsType";
 
-export const Stats = () => {
+export const Stats = ({
+  editorsData,
+  payoutsData,
+}: {
+  editorsData: EDITORS_LIST[];
+  payoutsData: PAYOUTS_LIST[];
+}) => {
   const bStyles = {
     borderLeft: "solid 1px",
     borderColor: "divider2",
+  };
+  const [valueOfRewards, setValueOfRewards] = useState(0);
+
+  const valOfTotalRewards = () => {
+    let value: number = 0;
+    editorsData.map((data) => {
+      value += data.TotalRewards;
+    });
+    setValueOfRewards(value);
   };
 
   return (
@@ -46,16 +62,19 @@ export const Stats = () => {
           rounded="lg"
           bg="cardBg2"
         >
-          <StakeCard title="Total Number of Payments " value="349,391" />
+          <StakeCard
+            title="Total Number of Payments "
+            value={payoutsData.length.toFixed(0)}
+          />
 
           <StakeCard
             title="Total Value Of Payments Made"
-            value="$1.4M"
+            value={utils.formatEther(valueOfRewards)}
             {...bStyles}
           />
           <StakeCard
             title="Number Of Paid Editors"
-            value="3,128"
+            value={editorsData.length.toFixed(0)}
             {...bStyles}
           />
         </SimpleGrid>
