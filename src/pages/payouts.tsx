@@ -89,7 +89,8 @@ function Payouts({
 
   useEffect(() => {
     checkIfAddressIsEditor();
-  }, [updated, currentUser, payersData]);
+    console.log(table);
+  }, [updated, currentUser, payersData, table]);
 
   const { writeAsync: Single } = useContractWrite({
     addressOrName: config.PayoutsContractAddress,
@@ -122,8 +123,9 @@ function Payouts({
       });
     } else {
       let temporaryTable: TableType = { address, amount };
-      console.log(table);
+
       setTable([...table, { ...temporaryTable }]);
+      console.log(table);
     }
   };
 
@@ -136,7 +138,7 @@ function Payouts({
 
   const PayoutAction = async (data: TableType[], token: string) => {
     if (isUserConnected) {
-      const addresses = [""];
+      const addresses: string[] = [];
       const amounts: BigNumber[] = [];
       let tx: TransactionResponse;
       data.map((td) => {
@@ -144,6 +146,7 @@ function Payouts({
           addresses.push(td.address);
           let newAmount = utils.parseUnits(td.amount);
           amounts.push(newAmount);
+          console.log(addresses, amounts);
         } else {
           let toastTitle = "  Please fill the fields with valid data";
           toast({
@@ -165,8 +168,8 @@ function Payouts({
         tx = await Multiple({ args: [token, addresses, amounts] });
         setLoading(false);
       }
-      await tx.wait();
       onClose();
+
       let toastTitle = "Please wait Payment is pending";
 
       toast({
@@ -175,6 +178,7 @@ function Payouts({
         duration: 5000,
         isClosable: true,
       });
+      await tx.wait();
       isUpdated(true);
       toastTitle = "Payout done successfully";
 
@@ -328,10 +332,11 @@ function Payouts({
             <Button
               fontSize="sm"
               px="4"
+              disabled={table.length < 1}
               fontWeight="medium"
               bg="#FF5CAA"
               color="white"
-              // onClick={() => PayoutAction(table, token)}
+              onClick={() => PayoutAction(table, tokenAddress)}
               _hover={{ bg: "gray.100", color: "black" }}
               mr={3}
             >

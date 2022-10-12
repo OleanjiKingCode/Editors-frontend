@@ -109,9 +109,18 @@ function Lists({
       setLoading(true);
       const add = await addAddress({ args: [address] });
       setLoading(false);
-      await add.wait();
       onClose();
-      let toastTitle = "Payer address successfully added";
+      let toastTitle = "Please wait Payment is pending";
+
+      toast({
+        title: toastTitle,
+        status: "loading",
+        duration: 5000,
+        isClosable: true,
+      });
+      await add.wait();
+
+       toastTitle = "Payer address successfully added";
 
       toast({
         title: toastTitle,
@@ -137,9 +146,18 @@ function Lists({
         setLoading(true);
         const add = await removeAddress({ args: [address] });
         setLoading(false);
-        await add.wait();
+
         onCloseRemove();
-        let toastTitle = "Payer address successfully removed";
+        let toastTitle = "Please wait Payment is pending";
+
+        toast({
+          title: toastTitle,
+          status: "loading",
+          duration: 5000,
+          isClosable: true,
+        });
+        await add.wait();
+        toastTitle = "Payer address successfully removed";
 
         toast({
           title: toastTitle,
