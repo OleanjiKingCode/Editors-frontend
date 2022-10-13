@@ -9,8 +9,6 @@ const chainArray =
   config.alchemyChain === "goerli" ? [chain.goerli] : [chain.mainnet];
 export const { chains, provider } = configureChains(chainArray, [
   alchemyProvider({ alchemyId: config.alchemyApiKey, weight: 1 }),
-  // infuraProvider({ infuraId: config.infuraId, weight: 2 }),
-  // publicProvider({ weight: 3 }),
 ]);
 
 export const connectors: Connector[] = [

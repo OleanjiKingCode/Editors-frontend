@@ -8,15 +8,12 @@ import {
   Text,
   Icon,
   Spacer,
-  useDisclosure,
-  Button,
 } from "@chakra-ui/react";
 import { FocusableElement } from "@chakra-ui/utils";
-import { RiCloseLine, RiErrorWarningFill } from "react-icons/ri";
-import { useConnect, useNetwork, useAccount, useSwitchNetwork } from "wagmi";
+import { RiCloseLine } from "react-icons/ri";
+import { useConnect } from "wagmi";
 import { Metamask } from "./icons/metamask";
 import { WalletConnectIcon } from "./icons/walletconnect";
-
 
 const WalletConnect = ({
   onClose,
@@ -32,7 +29,6 @@ const WalletConnect = ({
   });
   const WALLET_LOGOS = [Metamask, WalletConnectIcon];
   const cancelRef = React.useRef<FocusableElement>(null);
- 
 
   if (!isOpen) return null;
   return (
@@ -89,8 +85,6 @@ const WalletConnect = ({
           </Box>
         </AlertDialogContent>
       </AlertDialog>
-
-      
     </>
   );
 };

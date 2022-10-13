@@ -1,11 +1,14 @@
 import React, { StrictMode } from "react";
-import { chakra, ChakraProvider, createStandaloneToast } from "@chakra-ui/react";
+import {
+  chakra,
+  ChakraProvider,
+  createStandaloneToast,
+} from "@chakra-ui/react";
 import type { AppProps } from "next/app";
 import Fonts from "../theme/Fonts";
 import { createClient, WagmiConfig } from "wagmi";
 import { connectors, provider } from "../config/wagmi";
 import { Navbar } from "../components/navbar";
-// import { UALProviderSwitch, WalletProvider } from '@/context/eosWalletContext'
 
 type CreateClientArgs = NonNullable<Parameters<typeof createClient>[number]>;
 type CreateClientConnectors = CreateClientArgs["connectors"];
@@ -22,8 +25,6 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
     <ChakraProvider resetCSS>
       <Fonts />
       <WagmiConfig client={client}>
-        {/* <UALProviderSwitch>
-          <WalletProvider> */}
         <chakra.div w="full">
           <chakra.div
             h="4.375em"
@@ -41,9 +42,6 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
             <Component {...pageProps} />
           </chakra.div>
         </chakra.div>
-
-        {/* </WalletProvider>
-        </UALProviderSwitch> */}
       </WagmiConfig>
     </ChakraProvider>
   );
