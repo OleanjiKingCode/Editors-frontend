@@ -24,7 +24,7 @@ import ProfileSubMenu from "./ProfileSubMenu";
 import { BraindaoLogo } from "../components/braindao-logo";
 import WalletConnect from "../components/WalletConnect";
 import { NetworkNotification } from "./Network/NetworkNotification";
-const { isConnected: isUserConnected } = useAccount();
+
 
 export const Navbar = (props: FlexProps) => {
   const [openWalletConnect, setOpenWalletConnect] = useState<boolean>(false);
@@ -32,10 +32,10 @@ export const Navbar = (props: FlexProps) => {
     NETWORK_DATA[0]
   );
   const { chain } = useNetwork();
-  const { isConnected } = useAccount();
   const handleNetworkSwitch = (newNetwork: NetworkType) => {
     setCurrentNetwork(newNetwork);
   };
+  const { isConnected: isUserConnected } = useAccount();
   const {
     isOpen: isOpenSwitch,
     onOpen: onOpenSwitch,
@@ -144,7 +144,7 @@ export const Navbar = (props: FlexProps) => {
             </MenuGroup>
           </MenuList>
         </Menu>
-        {!isConnected ? (
+        {!isUserConnected ? (
           <Button
             size="sm"
             onClick={() => setOpenWalletConnect(true)}

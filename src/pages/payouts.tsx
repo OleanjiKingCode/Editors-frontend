@@ -401,7 +401,7 @@ function Payouts({
                     <>
                       <Td>{shortenAccount(payout.Receiver)}</Td>
                       <Td>{dateConverter(payout.Date)}</Td>
-                      <Td>{utils.formatEther(payout.Rewards)}</Td>
+                      <Td>{payout.Rewards}</Td>
                     </>
                   </Tr>
                 );

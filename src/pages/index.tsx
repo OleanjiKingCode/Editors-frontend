@@ -17,7 +17,7 @@ export const getServerSideProps = async () => {
     .query(GET_EDITORS_LIST, undefined)
     .toPromise();
   const data: PAYOUTS_LIST[] = info.data?.payoutsRecords;
-  const editorsData: EDITORS_LIST[] = editorsInfo.data?.payers;
+  const editorsData: EDITORS_LIST[] = editorsInfo.data?.editors;
   return {
     props: {
       payoutsData: data ? data : [],
@@ -30,8 +30,10 @@ function Home({
   payoutsData,
   editorsData,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  console.log(payoutsData)
   return (
     <div>
+     
       <Head>
         <title>IQ Payouts</title>
         <meta name="description" content="IQ Editors Payouts" />

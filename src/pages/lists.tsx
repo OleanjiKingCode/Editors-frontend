@@ -78,7 +78,6 @@ function Lists({
     functionName: "addAddress",
   });
  
-
   const { writeAsync: removeAddress } = useContractWrite({
     addressOrName: config.PayoutsContractAddress,
     contractInterface: payoutAbi,

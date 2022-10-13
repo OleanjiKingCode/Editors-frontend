@@ -15,6 +15,7 @@ import React, { useEffect } from "react";
 import { networkMap } from "./NetworkData";
 import { FocusableElement } from "@chakra-ui/utils";
 import { RiErrorWarningFill, RiCloseLine } from "react-icons/ri";
+import { useConnect } from "wagmi";
 
 export const NetworkNotification = ({
   onClose,
@@ -24,16 +25,35 @@ export const NetworkNotification = ({
   onClose: () => void;
 }) => {
   const cancelRef = React.useRef<FocusableElement>(null);
+  const { chainId, chainName, rpcUrls } = networkMap.MUMBAI_TESTNET;
   const handleSwitchNetwork = async () => {
-    await window.ethereum?.request({
-      method: "wallet_addEthereumChain",
-      params: [
-        {
-          ...networkMap.MUMBAI_TESTNET,
-        },
-      ],
-    });
-    onClose();
+    try {
+      await window.ethereum?.request({
+        method: "wallet_switchEthereumChain",
+        params: [{ chainId }],
+      });
+      onClose();
+    } catch (switchError) {
+      const err = switchError as Record<string, number>;
+      if (err.code === 4902) {
+        try {
+          await window.ethereum?.request({
+            method: "wallet_addEthereumChain",
+            params: [
+              {
+                chainId,
+                chainName,
+                rpcUrls,
+              },
+            ],
+          });
+          onClose();
+        } catch (addError) {
+          return null;
+        }
+      }
+    }
+    return null;
   };
 
   return (

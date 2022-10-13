@@ -27,6 +27,7 @@ const WalletConnect = ({
       onClose();
     },
   });
+  
   const WALLET_LOGOS = [Metamask, WalletConnectIcon];
   const cancelRef = React.useRef<FocusableElement>(null);
 
@@ -70,7 +71,7 @@ const WalletConnect = ({
                   my={3}
                   px={3}
                   rounded="lg"
-                  border="solid 1px "
+                  border="solid 1px"
                   borderColor="divider"
                   key={index}
                   onClick={() => connect({ connector })}
