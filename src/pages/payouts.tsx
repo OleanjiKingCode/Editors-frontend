@@ -33,7 +33,7 @@ import React, { useState, useEffect } from "react";
 import shortenAccount from "../utils/shortenAccount";
 import { PAYOUTS_LIST, PAYERS_LIST, TableType } from "../types/payoutsType";
 import { GET_PAYOUTS_LISTS, GET_PAYERS_LISTS } from "../components/Queries";
-import { BigNumber, Signer, utils, constants, Contract } from "ethers";
+import { BigNumber, utils } from "ethers";
 import { useAccount, useContractWrite } from "wagmi";
 import { config } from "../config/index";
 import { payoutAbi } from "../abis/payouts";
@@ -258,7 +258,8 @@ function Payouts({
                   </FormLabel>
                   <Input
                     type="text"
-                    placeholder="Enter wallet address "
+                    id="addressId"
+                    placeholder="Enter wallet address"
                     onChange={(e) => setEditorAddress(e.target.value)}
                   />
                 </VStack>
@@ -268,6 +269,7 @@ function Payouts({
                   </FormLabel>
                   <Input
                     type="text"
+                    id="amountId"
                     placeholder="Enter amount of tokens "
                     onChange={(e) => setAmount(e.target.value)}
                   />
@@ -291,7 +293,7 @@ function Payouts({
                 w="full"
                 mt="5"
               >
-                <Table size="md" variant="striped" colorScheme={"gray"} p="10">
+                <Table size="sm" variant="striped" colorScheme={"gray"}>
                   <Thead>
                     <Tr>
                       <Th>Editors Address</Th>
@@ -299,10 +301,10 @@ function Payouts({
                       <Th>Action</Th>
                     </Tr>
                   </Thead>
-                  <Tbody p="3">
+                  <Tbody>
                     {table?.map((tb, i) => {
                       return (
-                        <Tr key={i} p="3">
+                        <Tr key={i}>
                           <>
                             <Td>{shortenAccount(tb.address)}</Td>
                             <Td>{tb.amount}</Td>
@@ -310,8 +312,7 @@ function Payouts({
                               <Button
                                 onClick={() => removeData(tb.address)}
                                 fontSize="sm"
-                                px="4"
-                                my="4"
+                                p="4"
                                 fontWeight="medium"
                                 bg="red.500"
                                 color="white"
@@ -346,6 +347,7 @@ function Payouts({
               onClick={() => {
                 setLoading(false);
                 onClose();
+                setTable([]);
               }}
             >
               Cancel

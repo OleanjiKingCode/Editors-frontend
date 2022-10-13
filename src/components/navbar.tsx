@@ -11,27 +11,47 @@ import {
   Box,
   FlexProps,
   Text,
+  useDisclosure,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { config } from "../config/index";
 import { FaChevronDown } from "react-icons/fa";
 import NextLink from "next/link";
 import { NETWORK_DATA } from "../data/NetworkData";
 import { NetworkType } from "../types/NetworkType";
-import { useAccount } from "wagmi";
+import { useNetwork, useAccount } from "wagmi";
 import ProfileSubMenu from "./ProfileSubMenu";
 import { BraindaoLogo } from "../components/braindao-logo";
 import WalletConnect from "../components/WalletConnect";
+import { NetworkNotification } from "./Network/NetworkNotification";
+const { isConnected: isUserConnected } = useAccount();
 
 export const Navbar = (props: FlexProps) => {
   const [openWalletConnect, setOpenWalletConnect] = useState<boolean>(false);
   const [currentNetwork, setCurrentNetwork] = useState<NetworkType>(
     NETWORK_DATA[0]
   );
+  const { chain } = useNetwork();
   const { isConnected } = useAccount();
-
   const handleNetworkSwitch = (newNetwork: NetworkType) => {
     setCurrentNetwork(newNetwork);
   };
+  const {
+    isOpen: isOpenSwitch,
+    onOpen: onOpenSwitch,
+    onClose: onCloseSwitch,
+  } = useDisclosure();
+
+  useEffect(() => {
+    CheckNetwork();
+  }, [isUserConnected]);
+
+  const CheckNetwork = () => {
+    if (isUserConnected && chain?.id !== config.chainId) {
+      onOpenSwitch();
+    }
+  };
+
   return (
     <>
       <Flex
@@ -56,7 +76,7 @@ export const Navbar = (props: FlexProps) => {
           <Text
             fontWeight="bold"
             as="a"
-            fontSize={{ base: "sm", md: "md", xl:'lg' }}
+            fontSize={{ base: "sm", md: "md", xl: "lg" }}
             px={{ base: "2", xl: "4" }}
             py={2}
             rounded="lg"
@@ -69,7 +89,7 @@ export const Navbar = (props: FlexProps) => {
           <Text
             fontWeight="bold"
             as="a"
-            fontSize={{ base: "sm", md: "md", xl:'lg' }}
+            fontSize={{ base: "sm", md: "md", xl: "lg" }}
             px={{ base: "2", xl: "4" }}
             py={2}
             rounded="lg"
@@ -145,6 +165,7 @@ export const Navbar = (props: FlexProps) => {
         onClose={() => setOpenWalletConnect(false)}
         isOpen={openWalletConnect}
       />
+      <NetworkNotification isOpen={isOpenSwitch} onClose={onCloseSwitch} />
     </>
   );
 };
