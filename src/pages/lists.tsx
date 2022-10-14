@@ -69,6 +69,7 @@ function Lists({
   const [loading, setLoading] = useState(false);
   const { address: currentUser, isConnected: isUserConnected } = useAccount();
   const toast = useToast();
+  const [updated, isUpdated] = useState(false);
   const [isAnOwner, setIsAnOwner] = useState(false);
 
   const { writeAsync: addAddress } = useContractWrite({
@@ -96,8 +97,11 @@ function Lists({
     setIsAnOwner(isThere);
   };
   useEffect(() => {
+    if (updated) {
+      getServerSideProps();
+    }
     checkIfAddressIsOwner();
-  }, [currentUser, Ownerdata]);
+  }, [updated, currentUser, Ownerdata]);
 
   const addAddressToList = async (address: string) => {
     if (isUserConnected) {
@@ -114,7 +118,7 @@ function Lists({
         isClosable: true,
       });
       await add.wait();
-
+      isUpdated(true);
       toastTitle = "Payer address successfully added";
 
       toast({

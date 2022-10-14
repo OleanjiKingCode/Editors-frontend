@@ -90,6 +90,9 @@ function Payouts({
   };
 
   useEffect(() => {
+    if (updated) {
+      getServerSideProps();
+    }
     checkIfAddressIsEditor();
   }, [updated, currentUser, payersData, payoutsData, table]);
 
@@ -316,8 +319,8 @@ function Payouts({
                           }
                           size="sm"
                           fontWeight="500"
-                          color="#FF5CAA"
-                          bg="transparent"
+                          bg="#FF5CAA"
+                          color="white"
                         >
                           <Flex gap="4" alignItems="center">
                             {shortenAccount(payout.transactionHash)}
