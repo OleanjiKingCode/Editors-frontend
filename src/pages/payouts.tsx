@@ -347,6 +347,7 @@ function Payouts({
               <Input
                 type="text"
                 placeholder="Enter token address to be sent"
+                value={config.IQPolygonAddress}
                 onChange={(e) => setTokenAddress(e.target.value)}
               />
             </FormControl>

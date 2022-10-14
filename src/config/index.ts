@@ -9,4 +9,5 @@ export const config = {
   PayoutsGraphApi:
     process.env.PAYOUTS_GRAPH_API ||
     "https://api.thegraph.com/subgraphs/name/oleanjikingcode/payout",
+  IQPolygonAddress: "0xB9638272aD6998708de56BBC0A290a1dE534a578",
 };
