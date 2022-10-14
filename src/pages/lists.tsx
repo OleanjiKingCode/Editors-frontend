@@ -63,8 +63,6 @@ function Lists({
     onClose: onCloseRemove,
   } = useDisclosure();
 
-  const provider = useProvider();
-
   const [newPayer, setNewPayer] = useState("");
   const [removePayer, setRemovePayer] = useState("");
   const [loading, setLoading] = useState(false);
@@ -77,7 +75,7 @@ function Lists({
     contractInterface: payoutAbi,
     functionName: "addAddress",
   });
- 
+
   const { writeAsync: removeAddress } = useContractWrite({
     addressOrName: config.PayoutsContractAddress,
     contractInterface: payoutAbi,
@@ -99,6 +97,7 @@ function Lists({
   useEffect(() => {
     checkIfAddressIsOwner();
   }, [currentUser, Ownerdata]);
+
   const addAddressToList = async (address: string) => {
     if (isUserConnected) {
       setLoading(true);
@@ -115,7 +114,7 @@ function Lists({
       });
       await add.wait();
 
-       toastTitle = "Payer address successfully added";
+      toastTitle = "Payer address successfully added";
 
       toast({
         title: toastTitle,

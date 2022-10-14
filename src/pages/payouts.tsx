@@ -89,8 +89,8 @@ function Payouts({
 
   useEffect(() => {
     checkIfAddressIsEditor();
-    console.log(table);
-  }, [updated, currentUser, payersData, table]);
+    
+  }, [updated, currentUser, payersData, payoutsData, table]);
 
   const { writeAsync: Single } = useContractWrite({
     addressOrName: config.PayoutsContractAddress,
