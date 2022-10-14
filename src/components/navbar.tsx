@@ -25,7 +25,6 @@ import { BraindaoLogo } from "../components/braindao-logo";
 import WalletConnect from "../components/WalletConnect";
 import { NetworkNotification } from "./Network/NetworkNotification";
 
-
 export const Navbar = (props: FlexProps) => {
   const [openWalletConnect, setOpenWalletConnect] = useState<boolean>(false);
   const [currentNetwork, setCurrentNetwork] = useState<NetworkType>(

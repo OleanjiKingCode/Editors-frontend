@@ -19,7 +19,7 @@ export const Stats = ({
   const valOfTotalRewards = () => {
     let value = 0;
     editorsData.map((data) => {
-      let num = parseInt(data.TotalRewards.toString());
+      let num = parseInt(data.totalRewards.toString());
       value += num;
     });
 

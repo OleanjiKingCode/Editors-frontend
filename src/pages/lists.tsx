@@ -3,6 +3,7 @@ import {
   Thead,
   Tbody,
   Text,
+  Icon,
   Flex,
   Heading,
   chakra,
@@ -27,7 +28,7 @@ import {
 } from "@chakra-ui/react";
 import { InferGetServerSidePropsType } from "next";
 import React, { useState, useEffect } from "react";
-import shortenAccount from "../utils/shortenAccount";
+import { RiExternalLinkFill } from "react-icons/ri";
 import { utils } from "ethers";
 import { useAccount, useContract, useContractWrite, useProvider } from "wagmi";
 import { PAYERS_LIST, OWNER } from "../types/payoutsType";
@@ -307,7 +308,25 @@ function Lists({
                   <Tr key={i}>
                     {!payer.Deleted && (
                       <>
-                        <Td>{shortenAccount(payer.Address)}</Td>
+                        <Td>
+                          <Flex gap="4" alignItems="center">
+                            <Text textAlign="center">{payer.id}</Text>
+                            <Button
+                              onClick={() =>
+                                window.open(
+                                  `https://iq.wiki/account/${payer.id}`,
+                                  "_blank"
+                                )
+                              }
+                              size="sm"
+                              fontWeight="500"
+                              color="#FF5CAA"
+                              bg="transparent"
+                            >
+                              <Icon as={RiExternalLinkFill} />
+                            </Button>
+                          </Flex>
+                        </Td>
                         <Td>
                           <Button
                             fontSize="sm"
@@ -316,7 +335,7 @@ function Lists({
                             bg="#FF5CAA"
                             color="white"
                             onClick={() => {
-                              setRemovePayer(payer.Address);
+                              setRemovePayer(payer.id);
                               onOpenRemove();
                             }}
                             _hover={{ bg: "gray.300", color: "black" }}

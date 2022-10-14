@@ -6,7 +6,8 @@ query {
         Receiver
         Date
         Rewards
-        TokenAddress
+        tokenAddress
+        transactionHash
     }
 }
 `;
@@ -16,20 +17,18 @@ query {
     payers {
         id
         Deleted
-        Address 
+        Date 
     }
 }
 `;
 
 export const GET_EDITORS_LIST = `
 query {
- editors(orderBy:TotalRewards orderDirection:desc){
+ editors(orderBy:totalRewards orderDirection:desc){
     id
-    Address
-    TotalRewards
+    totalRewards
   }
 }`;
-
 
 export const GET_OWNER = `
 query {

@@ -46,7 +46,7 @@ export const HeroSection = () => {
         <ButtonGroup size="lg" spacing={{ base: 5, lg: 9 }}>
           <Button
             as="a"
-            href="/Payouts"
+            href="/payouts"
             w={{ base: 32, lg: 40 }}
             bg="#FF5CAA"
             color="white"

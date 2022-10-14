@@ -4,15 +4,14 @@ export type PAYOUTS_LIST = {
   Sender: string;
   Date: string;
   Rewards: number;
-  TokenAddress: string;
+  tokenAddress: string;
+  transactionHash: string;
 };
 
 export type EDITORS_LIST = {
   id: string;
-  Address: string;
-  TotalRewards: number;
+  totalRewards: number;
 };
-
 
 export type OWNER = {
   id: string;
@@ -23,10 +22,10 @@ export type OWNER = {
 export type PAYERS_LIST = {
   id: string;
   Deleted: boolean;
-  Address: string;
+  Date: string;
 };
 
 export type TableType = {
-  address:string; 
-  amount:string;
+  address: string;
+  amount: string;
 };

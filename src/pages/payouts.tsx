@@ -7,6 +7,7 @@ import {
   Heading,
   chakra,
   Tr,
+  Icon,
   Th,
   Td,
   Box,
@@ -38,6 +39,7 @@ import { useAccount, useContractWrite } from "wagmi";
 import { config } from "../config/index";
 import { payoutAbi } from "../abis/payouts";
 import { createClient } from "urql";
+import { RiExternalLinkFill } from "react-icons/ri";
 import { TransactionResponse } from "@ethersproject/providers";
 const client = createClient({
   url: config.PayoutsGraphApi,
@@ -78,7 +80,7 @@ function Payouts({
     const addresses = [""];
     const tx = await Promise.all(
       payersData.map(async (i) => {
-        addresses.push(i.Address);
+        addresses.push(i.id);
         return addresses;
       })
     );
@@ -89,7 +91,6 @@ function Payouts({
 
   useEffect(() => {
     checkIfAddressIsEditor();
-    
   }, [updated, currentUser, payersData, payoutsData, table]);
 
   const { writeAsync: Single } = useContractWrite({
@@ -235,6 +236,103 @@ function Payouts({
         </Flex>
       </Flex>
 
+      <Flex
+        direction="column"
+        alignItems="center"
+        justifyContent="center"
+        pb="3rem"
+      >
+        <chakra.div overflowX="auto" fontSize="sm" w="90%" textAlign="end">
+          <Tooltip
+            label={!isAnEditor && "you cannot make payments"}
+            bg="blackAlpha.600"
+            rounded="xl"
+          >
+            <Button
+              onClick={onOpen}
+              disabled={!isAnEditor}
+              fontSize="sm"
+              px="4"
+              my="4"
+              fontWeight="medium"
+              bg="#FF5CAA"
+              color="white"
+              _hover={isAnEditor ? { bg: "gray.100", color: "black" } : {}}
+            >
+              Make New Payment
+            </Button>
+          </Tooltip>
+        </chakra.div>
+        <chakra.div
+          overflowX="auto"
+          border="solid 1px"
+          borderColor="divider2"
+          rounded="lg"
+          fontSize="sm"
+          w="90%"
+        >
+          <Table size="md" variant="striped" colorScheme={"gray"}>
+            <Thead>
+              <Tr>
+                <Th>Editors Address</Th>
+                <Th>Date Paid</Th>
+                <Th> Amount(IQ)</Th>
+                <Th>Transaction Link </Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {payoutsData?.map((payout, i) => {
+                return (
+                  <Tr key={i}>
+                    <>
+                      <Td>
+                        <Flex gap="4" alignItems="center">
+                          <Text textAlign="center">{payout.Receiver}</Text>
+                          <Button
+                            onClick={() =>
+                              window.open(
+                                `https://mumbai.polygonscan.com/address/${payout.Receiver}`,
+                                "_blank"
+                              )
+                            }
+                            size="sm"
+                            fontWeight="500"
+                            color="#FF5CAA"
+                            bg="transparent"
+                          >
+                            <Icon as={RiExternalLinkFill} />
+                          </Button>
+                        </Flex>
+                      </Td>
+                      <Td>{dateConverter(payout.Date)}</Td>
+                      <Td>{payout.Rewards}</Td>
+                      <Td>
+                        <Button
+                          onClick={() =>
+                            window.open(
+                              `https://mumbai.polygonscan.com/tx/${payout.transactionHash}`,
+                              "_blank"
+                            )
+                          }
+                          size="sm"
+                          fontWeight="500"
+                          color="#FF5CAA"
+                          bg="transparent"
+                        >
+                          <Flex gap="4" alignItems="center">
+                            {shortenAccount(payout.transactionHash)}
+                            <Icon size="md" as={RiExternalLinkFill} />
+                          </Flex>
+                        </Button>
+                      </Td>
+                    </>
+                  </Tr>
+                );
+              })}
+            </Tbody>
+          </Table>
+        </chakra.div>
+      </Flex>
       <Modal isOpen={isOpen} onClose={onClose} size="2xl">
         <ModalOverlay />
         <ModalContent>
@@ -355,61 +453,6 @@ function Payouts({
           </ModalFooter>
         </ModalContent>
       </Modal>
-
-      <Flex direction="column" alignItems="center" justifyContent="center">
-        <chakra.div overflowX="auto" fontSize="sm" w="90%" textAlign="end">
-          <Tooltip
-            label={!isAnEditor && "you cannot make payments"}
-            bg="blackAlpha.600"
-            rounded="xl"
-          >
-            <Button
-              onClick={onOpen}
-              disabled={!isAnEditor}
-              fontSize="sm"
-              px="4"
-              my="4"
-              fontWeight="medium"
-              bg="#FF5CAA"
-              color="white"
-              _hover={isAnEditor ? { bg: "gray.100", color: "black" } : {}}
-            >
-              Make New Payment
-            </Button>
-          </Tooltip>
-        </chakra.div>
-        <chakra.div
-          overflowX="auto"
-          border="solid 1px"
-          borderColor="divider2"
-          rounded="lg"
-          fontSize="sm"
-          w="90%"
-        >
-          <Table size="md" variant="striped" colorScheme={"gray"}>
-            <Thead>
-              <Tr>
-                <Th>Editors Address</Th>
-                <Th>Date Paid</Th>
-                <Th> Amount</Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {payoutsData?.map((payout, i) => {
-                return (
-                  <Tr key={i}>
-                    <>
-                      <Td>{shortenAccount(payout.Receiver)}</Td>
-                      <Td>{dateConverter(payout.Date)}</Td>
-                      <Td>{payout.Rewards}</Td>
-                    </>
-                  </Tr>
-                );
-              })}
-            </Tbody>
-          </Table>
-        </chakra.div>
-      </Flex>
     </Box>
   );
 }
