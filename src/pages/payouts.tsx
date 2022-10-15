@@ -224,7 +224,7 @@ function Payouts({
   };
   return (
     <Box pt={10} mx={18}>
-      <Flex direction="column" gap="6" pt="2" px={15} mb="8">
+      <Flex direction="column" gap="6" pt="2" px={15} mb="1">
         <Flex direction="column" gap="1">
           <Heading fontWeight="bold" fontSize={{ md: "xl", lg: "2xl" }}>
             Payouts
@@ -321,6 +321,7 @@ function Payouts({
                           fontWeight="500"
                           bg="#FF5CAA"
                           color="white"
+                          _hover={{ bg: "gray.300", color: "black" }}
                         >
                           <Flex gap="4" alignItems="center">
                             {shortenAccount(payout.transactionHash)}
