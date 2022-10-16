@@ -8,7 +8,7 @@ import { GET_PAYOUTS_LISTS, GET_EDITORS_LIST } from "../components/Queries";
 import { config } from "../config";
 import { Stats } from "../components/Landing/stats";
 const client = createClient({
-  url: config.PayoutsGraphApi,
+  url: config.payoutsGraphApi,
 });
 
 export const getServerSideProps = async () => {

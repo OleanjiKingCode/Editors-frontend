@@ -42,7 +42,7 @@ import { createClient } from "urql";
 import { RiExternalLinkFill } from "react-icons/ri";
 import { TransactionResponse } from "@ethersproject/providers";
 const client = createClient({
-  url: config.PayoutsGraphApi,
+  url: config.payoutsGraphApi,
 });
 
 export const getServerSideProps = async () => {
@@ -97,13 +97,13 @@ function Payouts({
   }, [updated, currentUser, payersData, payoutsData, table]);
 
   const { writeAsync: Single } = useContractWrite({
-    addressOrName: config.PayoutsContractAddress,
+    addressOrName: config.payoutsContractAddress,
     contractInterface: payoutAbi,
     functionName: "singlePayout",
   });
 
   const { writeAsync: Multiple } = useContractWrite({
-    addressOrName: config.PayoutsContractAddress,
+    addressOrName: config.payoutsContractAddress,
     contractInterface: payoutAbi,
     functionName: "multiplePayout",
   });
@@ -294,7 +294,7 @@ function Payouts({
                           <Button
                             onClick={() =>
                               window.open(
-                                `https://mumbai.polygonscan.com/address/${payout.Receiver}`,
+                                `${config.mumbaiScan}address/${payout.Receiver}`,
                                 "_blank"
                               )
                             }
@@ -313,7 +313,7 @@ function Payouts({
                         <Button
                           onClick={() =>
                             window.open(
-                              `https://mumbai.polygonscan.com/tx/${payout.transactionHash}`,
+                              `${config.mumbaiScan}tx/${payout.transactionHash}`,
                               "_blank"
                             )
                           }
@@ -348,7 +348,7 @@ function Payouts({
               <Input
                 type="text"
                 placeholder="Enter token address to be sent"
-                value={config.IQPolygonAddress}
+                value={config.iqPolygonAddress}
                 onChange={(e) => setTokenAddress(e.target.value)}
               />
             </FormControl>

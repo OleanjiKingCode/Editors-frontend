@@ -37,7 +37,7 @@ import { config } from "../config/index";
 import { payoutAbi } from "../abis/payouts";
 import { createClient } from "urql";
 const client = createClient({
-  url: config.PayoutsGraphApi,
+  url: config.payoutsGraphApi,
 });
 
 export const getServerSideProps = async () => {
@@ -73,13 +73,13 @@ function Lists({
   const [isAnOwner, setIsAnOwner] = useState(false);
 
   const { writeAsync: addAddress } = useContractWrite({
-    addressOrName: config.PayoutsContractAddress,
+    addressOrName: config.payoutsContractAddress,
     contractInterface: payoutAbi,
     functionName: "addAddress",
   });
 
   const { writeAsync: removeAddress } = useContractWrite({
-    addressOrName: config.PayoutsContractAddress,
+    addressOrName: config.payoutsContractAddress,
     contractInterface: payoutAbi,
     functionName: "removeAddress",
   });

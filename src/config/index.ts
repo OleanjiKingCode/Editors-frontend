@@ -3,11 +3,12 @@ export const config = {
   alchemyChain: "mumbai",
   chainId: 80001,
   chainName: "mumbai",
-  PayoutsContractAddress:
+  payoutsContractAddress:
     process.env.PAYOUTS_CONTRACT_ADDRERSS ||
     "0xCca2C72a79e4F3307caa469F12085Be6Fca2E15f",
-  PayoutsGraphApi:
+  payoutsGraphApi:
     process.env.PAYOUTS_GRAPH_API ||
     "https://api.thegraph.com/subgraphs/name/oleanjikingcode/payout",
-  IQPolygonAddress: "0xB9638272aD6998708de56BBC0A290a1dE534a578",
+  iqPolygonAddress: "0xB9638272aD6998708de56BBC0A290a1dE534a578",
+  mumbaiScan: "https://mumbai.polygonscan.com/",
 };
