@@ -49,7 +49,7 @@ const client = createClient({
 export const getServerSideProps = async () => {
   const info = await client.query(GET_PAYOUTS_LISTS, { skip: 0 }).toPromise();
   const payersInfo = await client
-    .query(GET_PAYERS_LISTS, undefined)
+    .query(GET_PAYERS_LISTS, { skip: 0 })
     .toPromise();
   const data: PAYOUTS_LIST[] = info.data?.payoutsRecords;
   const payersData: PAYERS_LIST[] = payersInfo.data?.payers;
@@ -76,6 +76,7 @@ function Payouts({
   const { address: currentUser, isConnected: isUserConnected } = useAccount();
   const toast = useToast();
   const [records, setRecords] = useState<PAYOUTS_LIST[]>(payoutsData);
+  const [payers, setPayers] = useState<PAYERS_LIST[]>(payersData);
 
   const [table, setTable] = useState<TableType[]>([]);
   const [updated, isUpdated] = useState(false);
@@ -83,7 +84,7 @@ function Payouts({
   const checkIfAddressIsEditor = async () => {
     const addresses = [""];
     const tx = await Promise.all(
-      payersData.map(async (i) => {
+      payers.map(async (i) => {
         addresses.push(i.id);
         return addresses;
       })
@@ -99,7 +100,12 @@ function Payouts({
       .toPromise();
 
     const data: PAYOUTS_LIST[] = info.data?.payoutsRecords;
+    const payersInfo = await client
+      .query(GET_PAYERS_LISTS, undefined)
+      .toPromise();
 
+    const payersData: PAYERS_LIST[] = payersInfo.data?.payers;
+    setPayers(payersData);
     setRecords(data);
   };
 
@@ -109,7 +115,7 @@ function Payouts({
     }
     getNewRecords(offset);
     checkIfAddressIsEditor();
-  }, [updated, currentUser, payersData, offset, records, table]);
+  }, [updated, currentUser, payers, offset, records, table]);
 
   const { writeAsync: Single } = useContractWrite({
     addressOrName: config.payoutsContractAddress,
@@ -132,6 +138,7 @@ function Payouts({
       ? setRecords(payoutsData)
       : setOffset(offset - 5);
   };
+
   const tempTable = (address: string, amount: string) => {
     if (!address && !amount) {
       toast({

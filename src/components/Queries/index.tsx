@@ -13,8 +13,8 @@ query($skip:Int){
 `;
 
 export const GET_PAYERS_LISTS = `
-query {
-    payers {
+query ($skip:Int){
+    payers(first:5 skip:$skip orderBy:Date orderDirection:desc){
         id
         Deleted
         Date 

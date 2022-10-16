@@ -36,13 +36,14 @@ import { GET_PAYERS_LISTS, GET_OWNER } from "../components/Queries";
 import { config } from "../config/index";
 import { payoutAbi } from "../abis/payouts";
 import { createClient } from "urql";
+import { ArrowBackIcon, ArrowForwardIcon } from "@chakra-ui/icons";
 const client = createClient({
   url: config.payoutsGraphApi,
 });
 
 export const getServerSideProps = async () => {
-  const info = await client.query(GET_PAYERS_LISTS, undefined).toPromise();
-  const Ownerinfo = await client.query(GET_OWNER, undefined).toPromise();
+  const info = await client.query(GET_PAYERS_LISTS, { skip: 0 }).toPromise();
+  const Ownerinfo = await client.query(GET_OWNER, {}).toPromise();
   const data: PAYERS_LIST[] = info.data?.payers;
   const Ownerdata: OWNER[] = Ownerinfo.data?.owners;
   return {
@@ -71,6 +72,10 @@ function Lists({
   const toast = useToast();
   const [updated, isUpdated] = useState(false);
   const [isAnOwner, setIsAnOwner] = useState(false);
+  const [activatePrevious, setActivatePrevious] = useState(false);
+  const [offset, setOffset] = useState(0);
+  const [ownerRecords, setOwnerRecords] = useState<OWNER[]>(Ownerdata);
+  const [payers, setPayers] = useState<PAYERS_LIST[]>(listData);
 
   const { writeAsync: addAddress } = useContractWrite({
     addressOrName: config.payoutsContractAddress,
@@ -83,11 +88,25 @@ function Lists({
     contractInterface: payoutAbi,
     functionName: "removeAddress",
   });
+  const getNewRecords = async (skip: number) => {
+    const info = await client
+      .query(GET_PAYERS_LISTS, { skip: skip })
+      .toPromise();
+
+    const data: PAYERS_LIST[] = info.data?.payers;
+
+    const Ownerinfo = await client.query(GET_OWNER, {}).toPromise();
+
+    const Ownerdata: OWNER[] = Ownerinfo.data?.owners;
+
+    setPayers(data);
+    setOwnerRecords(Ownerdata);
+  };
 
   const checkIfAddressIsOwner = async () => {
     const addresses = [""];
     const tx = await Promise.all(
-      Ownerdata.map(async (i) => {
+      ownerRecords.map(async (i) => {
         addresses.push(i.Address);
         return addresses;
       })
@@ -98,10 +117,11 @@ function Lists({
   };
   useEffect(() => {
     if (updated) {
-      getServerSideProps();
+      getNewRecords(offset);
     }
+    getNewRecords(offset);
     checkIfAddressIsOwner();
-  }, [updated, currentUser, Ownerdata]);
+  }, [updated, currentUser, ownerRecords, payers, offset]);
 
   const addAddressToList = async (address: string) => {
     if (isUserConnected) {
@@ -184,7 +204,15 @@ function Lists({
       });
     }
   };
+  const increasePagination = () => {
+    return payers && payers?.length >= 5 && setOffset(offset + 5);
+  };
 
+  const decreasePagination = () => {
+    return payers && payers?.length >= 5 && offset == 5
+      ? setPayers(listData)
+      : setOffset(offset - 5);
+  };
   return (
     <Box pt={10} mx={18}>
       <Flex direction="column" gap="6" pt="2" px={15} mb="8">
@@ -291,70 +319,101 @@ function Lists({
             </Button>
           </Tooltip>
         </chakra.div>
-        <chakra.div
+        <Flex
           overflowX="auto"
           border="solid 1px"
           borderColor="divider2"
           rounded="lg"
           fontSize="sm"
           w="90%"
+          flexDir="column"
         >
-          <Table size="md" variant="striped" colorScheme={"gray"}>
-            <Thead>
-              <Tr>
-                <Th>Address</Th>
-                <Th>Action</Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {listData?.map((payer, i) => {
-                return (
-                  <Tr key={i}>
-                    {!payer.Deleted && (
-                      <>
-                        <Td>
-                          <Flex gap="4" alignItems="center">
-                            <Text textAlign="center">{payer.id}</Text>
+          <chakra.div py="3">
+            <Table size="md" variant="striped" colorScheme={"gray"}>
+              <Thead>
+                <Tr>
+                  <Th>Address</Th>
+                  <Th>Action</Th>
+                </Tr>
+              </Thead>
+              <Tbody>
+                {listData?.map((payer, i) => {
+                  return (
+                    <Tr key={i}>
+                      {!payer.Deleted && (
+                        <>
+                          <Td>
+                            <Flex gap="4" alignItems="center">
+                              <Text textAlign="center">{payer.id}</Text>
+                              <Button
+                                onClick={() =>
+                                  window.open(
+                                    `https://iq.wiki/account/${payer.id}`,
+                                    "_blank"
+                                  )
+                                }
+                                size="sm"
+                                fontWeight="500"
+                                color="#FF5CAA"
+                                bg="transparent"
+                              >
+                                <Icon as={RiExternalLinkFill} />
+                              </Button>
+                            </Flex>
+                          </Td>
+                          <Td>
                             <Button
-                              onClick={() =>
-                                window.open(
-                                  `https://iq.wiki/account/${payer.id}`,
-                                  "_blank"
-                                )
-                              }
-                              size="sm"
-                              fontWeight="500"
-                              color="#FF5CAA"
-                              bg="transparent"
+                              fontSize="sm"
+                              px="4"
+                              fontWeight="medium"
+                              bg="#FF5CAA"
+                              color="white"
+                              onClick={() => {
+                                setRemovePayer(payer.id);
+                                onOpenRemove();
+                              }}
+                              _hover={{ bg: "gray.300", color: "black" }}
                             >
-                              <Icon as={RiExternalLinkFill} />
+                              Remove
                             </Button>
-                          </Flex>
-                        </Td>
-                        <Td>
-                          <Button
-                            fontSize="sm"
-                            px="4"
-                            fontWeight="medium"
-                            bg="#FF5CAA"
-                            color="white"
-                            onClick={() => {
-                              setRemovePayer(payer.id);
-                              onOpenRemove();
-                            }}
-                            _hover={{ bg: "gray.300", color: "black" }}
-                          >
-                            Remove
-                          </Button>
-                        </Td>
-                      </>
-                    )}
-                  </Tr>
-                );
-              })}
-            </Tbody>
-          </Table>
-        </chakra.div>
+                          </Td>
+                        </>
+                      )}
+                    </Tr>
+                  );
+                })}
+              </Tbody>
+            </Table>
+          </chakra.div>
+          <Flex justify="space-between" w="95%" m="0 auto" pb="3">
+            <Button
+              leftIcon={<ArrowBackIcon />}
+              variant="outline"
+              disabled={!activatePrevious}
+              onClick={() => {
+                decreasePagination();
+                if (offset === 0) {
+                  setActivatePrevious(false);
+                }
+              }}
+            >
+              Previous
+            </Button>
+            <Button
+              rightIcon={<ArrowForwardIcon />}
+              variant="outline"
+              onClick={() => {
+                increasePagination();
+                if (payers && payers?.length >= 5) {
+                  setActivatePrevious(true);
+                }
+              }}
+              disabled={!payers || payers.length === 0}
+            >
+              Next
+            </Button>
+          </Flex>
+        </Flex>
       </Flex>
     </Box>
   );
