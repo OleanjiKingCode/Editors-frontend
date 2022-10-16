@@ -1,6 +1,6 @@
 export const GET_PAYOUTS_LISTS = `
-query {
-    payoutsRecords(orderBy:Rewards orderDirection:desc){
+query($skip:Int){
+    payoutsRecords(first:5 skip:$skip orderBy:Rewards orderDirection:desc){
         id
         Sender
         Receiver

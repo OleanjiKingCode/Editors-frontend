@@ -46,8 +46,10 @@ const client = createClient({
   url: config.payoutsGraphApi,
 });
 
-export const getServerSideProps = async () => {
-  const info = await client.query(GET_PAYOUTS_LISTS, undefined).toPromise();
+export const getServerSideProps = async ({ skip }: any) => {
+  const info = await client
+    .query(GET_PAYOUTS_LISTS, { skip: skip })
+    .toPromise();
   const payersInfo = await client
     .query(GET_PAYERS_LISTS, undefined)
     .toPromise();
@@ -65,10 +67,12 @@ function Payouts({
   payoutsData,
   payersData,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  console.log(payoutsData);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [loading, setLoading] = useState(false);
   const [isAnEditor, setIsAnEditor] = useState(false);
   const [activatePrevious, setActivatePrevious] = useState(false);
+  const [offset, setOffset] = useState(0);
   const [tokenAddress, setTokenAddress] = useState("");
   const [amount, setAmount] = useState("");
   const [editorAddress, setEditorAddress] = useState("");
@@ -93,10 +97,11 @@ function Payouts({
 
   useEffect(() => {
     if (updated) {
-      getServerSideProps();
+      getServerSideProps({ offset });
     }
+    getServerSideProps({ offset });
     checkIfAddressIsEditor();
-  }, [updated, currentUser, payersData, payoutsData, table]);
+  }, [updated, currentUser, payersData, offset, payoutsData, table]);
 
   const { writeAsync: Single } = useContractWrite({
     addressOrName: config.payoutsContractAddress,
@@ -111,19 +116,11 @@ function Payouts({
   });
 
   const increasePagination = () => {
-    return (
-      payoutsData &&
-      payoutsData?.length >= 10 &&
-      setPaginateOffset(paginateOffset + 10)
-    );
+    return payoutsData && payoutsData?.length >= 5 && setOffset(offset + 5);
   };
 
   const decreasePagination = () => {
-    return (
-      payoutsData &&
-      payoutsData?.length >= 10 &&
-      setPaginateOffset(paginateOffset - 10)
-    );
+    return payoutsData && payoutsData?.length >= 5 && setOffset(offset - 5);
   };
   const tempTable = (address: string, amount: string) => {
     if (!address && !amount) {
@@ -363,24 +360,24 @@ function Payouts({
               leftIcon={<ArrowBackIcon />}
               variant="outline"
               disabled={!activatePrevious}
-              // onClick={() => {
-              //   decreasePagination();
-              //   if (paginateOffset === 0) {
-              //     setActivatePrevious(false);
-              //   }
-              // }}
+              onClick={() => {
+                decreasePagination();
+                if (offset === 0) {
+                  setActivatePrevious(false);
+                }
+              }}
             >
               Previous
             </Button>
             <Button
               rightIcon={<ArrowForwardIcon />}
               variant="outline"
-              // onClick={() => {
-              //   increasePagination();
-              //   if (wikis && wikis?.length >= 10) {
-              //     setActivatePrevious(true);
-              //   }
-              // }}
+              onClick={() => {
+                increasePagination();
+                if (payoutsData && payoutsData?.length >= 5) {
+                  setActivatePrevious(true);
+                }
+              }}
               disabled={!payoutsData || payoutsData.length === 0}
             >
               Next
