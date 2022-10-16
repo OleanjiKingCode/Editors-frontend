@@ -128,7 +128,9 @@ function Payouts({
   };
 
   const decreasePagination = () => {
-    return records && records?.length >= 5 && setOffset(offset - 5);
+    return records && records?.length >= 5 && offset == 5
+      ? setRecords(payoutsData)
+      : setOffset(offset - 5);
   };
   const tempTable = (address: string, amount: string) => {
     if (!address && !amount) {
