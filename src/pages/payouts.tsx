@@ -80,7 +80,7 @@ function Payouts({
 
   const [table, setTable] = useState<TableType[]>([]);
   const [updated, isUpdated] = useState(false);
-  console.log(records);
+ 
   const checkIfAddressIsEditor = async () => {
     const addresses = [""];
     const tx = await Promise.all(

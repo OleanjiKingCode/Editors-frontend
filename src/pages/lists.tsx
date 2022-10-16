@@ -76,7 +76,7 @@ function Lists({
   const [offset, setOffset] = useState(0);
   const [ownerRecords, setOwnerRecords] = useState<OWNER[]>(Ownerdata);
   const [payers, setPayers] = useState<PAYERS_LIST[]>(listData);
-
+  console.log(payers);
   const { writeAsync: addAddress } = useContractWrite({
     addressOrName: config.payoutsContractAddress,
     contractInterface: payoutAbi,
@@ -337,7 +337,7 @@ function Lists({
                 </Tr>
               </Thead>
               <Tbody>
-                {listData?.map((payer, i) => {
+                {payers?.map((payer, i) => {
                   return (
                     <Tr key={i}>
                       {!payer.Deleted && (
