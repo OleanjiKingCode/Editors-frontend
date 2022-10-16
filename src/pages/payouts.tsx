@@ -46,10 +46,8 @@ const client = createClient({
   url: config.payoutsGraphApi,
 });
 
-export const getServerSideProps = async ({ skip }: any) => {
-  const info = await client
-    .query(GET_PAYOUTS_LISTS, { skip: skip })
-    .toPromise();
+export const getServerSideProps = async () => {
+  const info = await client.query(GET_PAYOUTS_LISTS, { skip: 0 }).toPromise();
   const payersInfo = await client
     .query(GET_PAYERS_LISTS, undefined)
     .toPromise();
@@ -67,7 +65,6 @@ function Payouts({
   payoutsData,
   payersData,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  console.log(payoutsData);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [loading, setLoading] = useState(false);
   const [isAnEditor, setIsAnEditor] = useState(false);
@@ -78,10 +75,11 @@ function Payouts({
   const [editorAddress, setEditorAddress] = useState("");
   const { address: currentUser, isConnected: isUserConnected } = useAccount();
   const toast = useToast();
+  const [records, setRecords] = useState<PAYOUTS_LIST[]>(payoutsData);
 
   const [table, setTable] = useState<TableType[]>([]);
   const [updated, isUpdated] = useState(false);
-
+  console.log(records);
   const checkIfAddressIsEditor = async () => {
     const addresses = [""];
     const tx = await Promise.all(
@@ -95,13 +93,23 @@ function Payouts({
     setIsAnEditor(isThere);
   };
 
+  const getNewRecords = async (skip: number) => {
+    const info = await client
+      .query(GET_PAYOUTS_LISTS, { skip: skip })
+      .toPromise();
+
+    const data: PAYOUTS_LIST[] = info.data?.payoutsRecords;
+
+    setRecords(data);
+  };
+
   useEffect(() => {
     if (updated) {
-      getServerSideProps({ offset });
+      getNewRecords(offset);
     }
-    getServerSideProps({ offset });
+    getNewRecords(offset);
     checkIfAddressIsEditor();
-  }, [updated, currentUser, payersData, offset, payoutsData, table]);
+  }, [updated, currentUser, payersData, offset, records, table]);
 
   const { writeAsync: Single } = useContractWrite({
     addressOrName: config.payoutsContractAddress,
@@ -116,11 +124,11 @@ function Payouts({
   });
 
   const increasePagination = () => {
-    return payoutsData && payoutsData?.length >= 5 && setOffset(offset + 5);
+    return records && records?.length >= 5 && setOffset(offset + 5);
   };
 
   const decreasePagination = () => {
-    return payoutsData && payoutsData?.length >= 5 && setOffset(offset - 5);
+    return records && records?.length >= 5 && setOffset(offset - 5);
   };
   const tempTable = (address: string, amount: string) => {
     if (!address && !amount) {
@@ -302,7 +310,7 @@ function Payouts({
                 </Tr>
               </Thead>
               <Tbody>
-                {payoutsData?.map((payout, i) => {
+                {records?.map((payout, i) => {
                   return (
                     <Tr key={i}>
                       <>
@@ -374,11 +382,11 @@ function Payouts({
               variant="outline"
               onClick={() => {
                 increasePagination();
-                if (payoutsData && payoutsData?.length >= 5) {
+                if (records && records?.length >= 5) {
                   setActivatePrevious(true);
                 }
               }}
-              disabled={!payoutsData || payoutsData.length === 0}
+              disabled={!records || records.length === 0}
             >
               Next
             </Button>
