@@ -41,6 +41,7 @@ import { payoutAbi } from "../abis/payouts";
 import { createClient } from "urql";
 import { RiExternalLinkFill } from "react-icons/ri";
 import { TransactionResponse } from "@ethersproject/providers";
+import { ArrowBackIcon, ArrowForwardIcon } from "@chakra-ui/icons";
 const client = createClient({
   url: config.payoutsGraphApi,
 });
@@ -67,6 +68,7 @@ function Payouts({
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [loading, setLoading] = useState(false);
   const [isAnEditor, setIsAnEditor] = useState(false);
+  const [activatePrevious, setActivatePrevious] = useState(false);
   const [tokenAddress, setTokenAddress] = useState("");
   const [amount, setAmount] = useState("");
   const [editorAddress, setEditorAddress] = useState("");
@@ -108,6 +110,21 @@ function Payouts({
     functionName: "multiplePayout",
   });
 
+  const increasePagination = () => {
+    return (
+      payoutsData &&
+      payoutsData?.length >= 10 &&
+      setPaginateOffset(paginateOffset + 10)
+    );
+  };
+
+  const decreasePagination = () => {
+    return (
+      payoutsData &&
+      payoutsData?.length >= 10 &&
+      setPaginateOffset(paginateOffset - 10)
+    );
+  };
   const tempTable = (address: string, amount: string) => {
     if (!address && !amount) {
       toast({
@@ -117,6 +134,7 @@ function Payouts({
         isClosable: true,
       });
     }
+
     const isInthere = table.find((elem) => elem.address == address);
     if (isInthere) {
       toast({
@@ -266,76 +284,109 @@ function Payouts({
             </Button>
           </Tooltip>
         </chakra.div>
-        <chakra.div
+
+        <Flex
           overflowX="auto"
           border="solid 1px"
           borderColor="divider2"
           rounded="lg"
           fontSize="sm"
           w="90%"
+          flexDir="column"
         >
-          <Table size="md" variant="striped" colorScheme={"gray"}>
-            <Thead>
-              <Tr>
-                <Th>Editors Address</Th>
-                <Th>Date Paid</Th>
-                <Th> Amount(IQ)</Th>
-                <Th>Transaction Link </Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {payoutsData?.map((payout, i) => {
-                return (
-                  <Tr key={i}>
-                    <>
-                      <Td>
-                        <Flex gap="4" alignItems="center">
-                          <Text textAlign="center">{payout.Receiver}</Text>
+          <chakra.div py="3">
+            <Table size="md" variant="striped" colorScheme={"gray"}>
+              <Thead>
+                <Tr>
+                  <Th>Editors Address</Th>
+                  <Th>Date Paid</Th>
+                  <Th> Amount(IQ)</Th>
+                  <Th>Transaction Link </Th>
+                </Tr>
+              </Thead>
+              <Tbody>
+                {payoutsData?.map((payout, i) => {
+                  return (
+                    <Tr key={i}>
+                      <>
+                        <Td>
+                          <Flex gap="4" alignItems="center">
+                            <Text textAlign="center">{payout.Receiver}</Text>
+                            <Button
+                              onClick={() =>
+                                window.open(
+                                  `${config.mumbaiScan}address/${payout.Receiver}`,
+                                  "_blank"
+                                )
+                              }
+                              size="sm"
+                              fontWeight="500"
+                              color="#FF5CAA"
+                              bg="transparent"
+                            >
+                              <Icon as={RiExternalLinkFill} />
+                            </Button>
+                          </Flex>
+                        </Td>
+                        <Td>{dateConverter(payout.Date)}</Td>
+                        <Td>{payout.Rewards}</Td>
+                        <Td>
                           <Button
                             onClick={() =>
                               window.open(
-                                `${config.mumbaiScan}address/${payout.Receiver}`,
+                                `${config.mumbaiScan}tx/${payout.transactionHash}`,
                                 "_blank"
                               )
                             }
                             size="sm"
                             fontWeight="500"
-                            color="#FF5CAA"
-                            bg="transparent"
+                            bg="#FF5CAA"
+                            color="white"
+                            _hover={{ bg: "gray.300", color: "black" }}
                           >
-                            <Icon as={RiExternalLinkFill} />
+                            <Flex gap="4" alignItems="center">
+                              {shortenAccount(payout.transactionHash)}
+                              <Icon size="md" as={RiExternalLinkFill} />
+                            </Flex>
                           </Button>
-                        </Flex>
-                      </Td>
-                      <Td>{dateConverter(payout.Date)}</Td>
-                      <Td>{payout.Rewards}</Td>
-                      <Td>
-                        <Button
-                          onClick={() =>
-                            window.open(
-                              `${config.mumbaiScan}tx/${payout.transactionHash}`,
-                              "_blank"
-                            )
-                          }
-                          size="sm"
-                          fontWeight="500"
-                          bg="#FF5CAA"
-                          color="white"
-                          _hover={{ bg: "gray.300", color: "black" }}
-                        >
-                          <Flex gap="4" alignItems="center">
-                            {shortenAccount(payout.transactionHash)}
-                            <Icon size="md" as={RiExternalLinkFill} />
-                          </Flex>
-                        </Button>
-                      </Td>
-                    </>
-                  </Tr>
-                );
-              })}
-            </Tbody>
-          </Table>
-        </chakra.div>
+                        </Td>
+                      </>
+                    </Tr>
+                  );
+                })}
+              </Tbody>
+            </Table>
+          </chakra.div>
+
+          <Flex justify="space-between" w="95%" m="0 auto" pb="3">
+            <Button
+              leftIcon={<ArrowBackIcon />}
+              variant="outline"
+              disabled={!activatePrevious}
+              // onClick={() => {
+              //   decreasePagination();
+              //   if (paginateOffset === 0) {
+              //     setActivatePrevious(false);
+              //   }
+              // }}
+            >
+              Previous
+            </Button>
+            <Button
+              rightIcon={<ArrowForwardIcon />}
+              variant="outline"
+              // onClick={() => {
+              //   increasePagination();
+              //   if (wikis && wikis?.length >= 10) {
+              //     setActivatePrevious(true);
+              //   }
+              // }}
+              disabled={!payoutsData || payoutsData.length === 0}
+            >
+              Next
+            </Button>
+          </Flex>
+        </Flex>
       </Flex>
       <Modal isOpen={isOpen} onClose={onClose} size="2xl">
         <ModalOverlay />
