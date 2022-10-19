@@ -30,7 +30,7 @@ import { InferGetServerSidePropsType } from "next";
 import React, { useState, useEffect } from "react";
 import { RiExternalLinkFill } from "react-icons/ri";
 import { utils } from "ethers";
-import { useAccount, useContract, useContractWrite, useProvider } from "wagmi";
+import { useAccount, useContractWrite } from "wagmi";
 import { PAYERS_LIST, OWNER } from "../types/payoutsType";
 import { GET_PAYERS_LISTS, GET_OWNER } from "../components/Queries";
 import { config } from "../config/index";
