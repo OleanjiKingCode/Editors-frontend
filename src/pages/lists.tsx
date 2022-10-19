@@ -45,11 +45,11 @@ export const getServerSideProps = async () => {
   const info = await client.query(GET_PAYERS_LISTS, { skip: 0 }).toPromise();
   const Ownerinfo = await client.query(GET_OWNER, {}).toPromise();
   const data: PAYERS_LIST[] = info.data?.payers;
-  const Ownerdata: OWNER[] = Ownerinfo.data?.owners;
+  const owner_data: OWNER[] = Ownerinfo.data?.owners;
   return {
     props: {
       listData: data ? data : [],
-      Ownerdata,
+      Ownerdata: owner_data ? owner_data : [],
     },
   };
 };
@@ -307,7 +307,7 @@ function Lists({
             <Button
               onClick={onOpen}
               fontSize="sm"
-              disabled={!isAnOwner}
+              disabled={!isAnOwner || !isUserConnected}
               px="4"
               my="4"
               fontWeight="medium"
@@ -337,7 +337,7 @@ function Lists({
                 </Tr>
               </Thead>
               <Tbody>
-                {payers.length > 0 ? (
+                {payers?.length > 0 ? (
                   <>
                     {payers?.map((payer, i) => {
                       return (

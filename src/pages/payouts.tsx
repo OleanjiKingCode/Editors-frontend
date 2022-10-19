@@ -52,11 +52,11 @@ export const getServerSideProps = async () => {
     .query(GET_PAYERS_LISTS, { skip: 0 })
     .toPromise();
   const data: PAYOUTS_LIST[] = info.data?.payoutsRecords;
-  const payersData: PAYERS_LIST[] = payersInfo.data?.payers;
+  const payersdata: PAYERS_LIST[] = payersInfo.data?.payers;
   return {
     props: {
       payoutsData: data ? data : [],
-      payersData,
+      payersData: payersdata ? payersdata : [],
     },
   };
 };
@@ -65,7 +65,6 @@ function Payouts({
   payoutsData,
   payersData,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  console.log(payoutsData, payersData);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [loading, setLoading] = useState(false);
   const [isAnEditor, setIsAnEditor] = useState(false);
@@ -84,12 +83,14 @@ function Payouts({
 
   const checkIfAddressIsEditor = async () => {
     const addresses = [""];
-    const tx = await Promise.all(
-      payers.map(async (i) => {
-        addresses.push(i.id);
-        return addresses;
-      })
-    );
+    const tx =
+      payers &&
+      (await Promise.all(
+        payers?.map(async (i) => {
+          addresses.push(i.id);
+          return addresses;
+        })
+      ));
     const Address = currentUser?.toLowerCase();
     const isThere = addresses.includes(Address ? Address : "");
     setIsAnEditor(isThere);
@@ -286,7 +287,7 @@ function Payouts({
           >
             <Button
               onClick={onOpen}
-              disabled={!isAnEditor}
+              disabled={!isAnEditor || !isUserConnected}
               fontSize="sm"
               px="4"
               my="4"
@@ -310,18 +311,18 @@ function Payouts({
           flexDir="column"
         >
           <chakra.div py="3">
-            <Table size="md" variant="striped" colorScheme={"gray"}>
-              <Thead>
-                <Tr>
-                  <Th>Editors Address</Th>
-                  <Th>Date Paid</Th>
-                  <Th> Amount(IQ)</Th>
-                  <Th>Transaction Link </Th>
-                </Tr>
-              </Thead>
-              <Tbody>
-                {records.length > 0 ? (
-                  <>
+            {records?.length > 0 ? (
+              <>
+                <Table size="md" variant="striped" colorScheme={"gray"}>
+                  <Thead>
+                    <Tr>
+                      <Th>Editors Address</Th>
+                      <Th>Date Paid</Th>
+                      <Th> Amount(IQ)</Th>
+                      <Th>Transaction Link </Th>
+                    </Tr>
+                  </Thead>
+                  <Tbody>
                     {records?.map((payout, i) => {
                       return (
                         <Tr key={i}>
@@ -373,16 +374,16 @@ function Payouts({
                         </Tr>
                       );
                     })}
-                  </>
-                ) : (
-                  <>
-                    <Text pt="2" textAlign="center" w="full">
-                      No data to display
-                    </Text>
-                  </>
-                )}
-              </Tbody>
-            </Table>
+                  </Tbody>
+                </Table>
+              </>
+            ) : (
+              <>
+                <Text pt="2" textAlign="center" w="full">
+                  No data to display
+                </Text>
+              </>
+            )}
           </chakra.div>
 
           <Flex justify="space-between" w="95%" m="0 auto" pb="3">

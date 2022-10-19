@@ -1,4 +1,4 @@
-const testnet = true;
+const testnet = false;
 export const config = {
   alchemyChain: testnet ? "mumbai" : "polygon",
   chainId: testnet ? 80001 : 137,
