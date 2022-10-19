@@ -1,6 +1,7 @@
 const testnet = false;
 export const config = {
   alchemyChain: testnet ? "mumbai" : "polygon",
+  isTestnet: testnet,
   chainId: testnet ? 80001 : 137,
   chainName: testnet ? "mumbai" : "Polygon Mainnet",
   payoutsContractAddress: testnet

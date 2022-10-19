@@ -105,12 +105,14 @@ function Lists({
 
   const checkIfAddressIsOwner = async () => {
     const addresses = [""];
-    const tx = await Promise.all(
-      ownerRecords.map(async (i) => {
-        addresses.push(i.address);
-        return addresses;
-      })
-    );
+    const tx =
+      ownerRecords &&
+      (await Promise.all(
+        ownerRecords.map(async (i) => {
+          addresses.push(i.address);
+          return addresses;
+        })
+      ));
     const Address = currentUser?.toLowerCase();
     const isThere = addresses.includes(Address ? Address : "");
     setIsAnOwner(isThere);
@@ -329,16 +331,16 @@ function Lists({
           flexDir="column"
         >
           <chakra.div py="3">
-            <Table size="md" variant="striped" colorScheme={"gray"}>
-              <Thead>
-                <Tr>
-                  <Th>Address</Th>
-                  <Th>Action</Th>
-                </Tr>
-              </Thead>
-              <Tbody>
-                {payers?.length > 0 ? (
-                  <>
+            {payers?.length > 0 ? (
+              <>
+                <Table size="md" variant="striped" colorScheme={"gray"}>
+                  <Thead>
+                    <Tr>
+                      <Th>Address</Th>
+                      <Th>Action</Th>
+                    </Tr>
+                  </Thead>
+                  <Tbody>
                     {payers?.map((payer, i) => {
                       return (
                         <Tr key={i}>
@@ -384,16 +386,16 @@ function Lists({
                         </Tr>
                       );
                     })}
-                  </>
-                ) : (
-                  <>
-                    <Text pt="2" textAlign="center" w="full">
-                      No data to display
-                    </Text>
-                  </>
-                )}
-              </Tbody>
-            </Table>
+                  </Tbody>
+                </Table>
+              </>
+            ) : (
+              <>
+                <Text pt="2" textAlign="center" w="full">
+                  No data to display
+                </Text>
+              </>
+            )}
           </chakra.div>
           <Flex justify="space-between" w="95%" m="0 auto" pb="3">
             <Button
