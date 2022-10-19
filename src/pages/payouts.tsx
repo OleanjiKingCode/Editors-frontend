@@ -320,55 +320,67 @@ function Payouts({
                 </Tr>
               </Thead>
               <Tbody>
-                {records?.map((payout, i) => {
-                  return (
-                    <Tr key={i}>
-                      <>
-                        <Td>
-                          <Flex gap="4" alignItems="center">
-                            <Text textAlign="center">{payout.receiver}</Text>
-                            <Button
-                              onClick={() =>
-                                window.open(
-                                  `${config.Scan}address/${payout.receiver}`,
-                                  "_blank"
-                                )
-                              }
-                              size="sm"
-                              fontWeight="500"
-                              color="#FF5CAA"
-                              bg="transparent"
-                            >
-                              <Icon as={RiExternalLinkFill} />
-                            </Button>
-                          </Flex>
-                        </Td>
-                        <Td>{dateConverter(payout.date)}</Td>
-                        <Td>{payout.rewards}</Td>
-                        <Td>
-                          <Button
-                            onClick={() =>
-                              window.open(
-                                `${config.Scan}tx/${payout.transactionHash}`,
-                                "_blank"
-                              )
-                            }
-                            size="sm"
-                            fontWeight="500"
-                            bg="#FF5CAA"
-                            color="white"
-                            _hover={{ bg: "gray.300", color: "black" }}
-                          >
-                            <Flex gap="4" alignItems="center">
-                              {shortenAccount(payout.transactionHash)}
-                              <Icon size="md" as={RiExternalLinkFill} />
-                            </Flex>
-                          </Button>
-                        </Td>
-                      </>
-                    </Tr>
-                  );
-                })}
+                {records.length > 0 ? (
+                  <>
+                    {records?.map((payout, i) => {
+                      return (
+                        <Tr key={i}>
+                          <>
+                            <Td>
+                              <Flex gap="4" alignItems="center">
+                                <Text textAlign="center">
+                                  {payout.receiver}
+                                </Text>
+                                <Button
+                                  onClick={() =>
+                                    window.open(
+                                      `${config.Scan}address/${payout.receiver}`,
+                                      "_blank"
+                                    )
+                                  }
+                                  size="sm"
+                                  fontWeight="500"
+                                  color="#FF5CAA"
+                                  bg="transparent"
+                                >
+                                  <Icon as={RiExternalLinkFill} />
+                                </Button>
+                              </Flex>
+                            </Td>
+                            <Td>{dateConverter(payout.date)}</Td>
+                            <Td>{payout.rewards}</Td>
+                            <Td>
+                              <Button
+                                onClick={() =>
+                                  window.open(
+                                    `${config.Scan}tx/${payout.transactionHash}`,
+                                    "_blank"
+                                  )
+                                }
+                                size="sm"
+                                fontWeight="500"
+                                bg="#FF5CAA"
+                                color="white"
+                                _hover={{ bg: "gray.300", color: "black" }}
+                              >
+                                <Flex gap="4" alignItems="center">
+                                  {shortenAccount(payout.transactionHash)}
+                                  <Icon size="md" as={RiExternalLinkFill} />
+                                </Flex>
+                              </Button>
+                            </Td>
+                          </>
+                        </Tr>
+                      );
+                    })}
+                  </>
+                ) : (
+                  <>
+                    <Text pt="2" textAlign="center" w="full">
+                      No data to display
+                    </Text>
+                  </>
+                )}
               </Tbody>
             </Table>
           </chakra.div>

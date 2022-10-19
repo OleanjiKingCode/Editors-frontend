@@ -30,7 +30,6 @@ function Home({
   payoutsData,
   editorsData,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  console.log(payoutsData, editorsData);
   return (
     <div>
       <Head>
@@ -41,7 +40,10 @@ function Home({
       <Flex direction="column" mx="auto" w="full">
         <chakra.div pt={{ base: 6, lg: 20 }}>
           <HeroSection />
-          <Stats editorsData={editorsData} payoutsData={payoutsData} />
+          <Stats
+            editorsData={editorsData ? editorsData : []}
+            payoutsData={payoutsData ? payoutsData : []}
+          />
         </chakra.div>
       </Flex>
     </div>

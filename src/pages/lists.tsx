@@ -337,52 +337,61 @@ function Lists({
                 </Tr>
               </Thead>
               <Tbody>
-                {payers.length}
-                {payers?.map((payer, i) => {
-                  return (
-                    <Tr key={i}>
-                      {!payer.deleted && (
-                        <>
-                          <Td>
-                            <Flex gap="4" alignItems="center">
-                              <Text textAlign="center">{payer.id}</Text>
-                              <Button
-                                onClick={() =>
-                                  window.open(
-                                    `https://iq.wiki/account/${payer.id}`,
-                                    "_blank"
-                                  )
-                                }
-                                size="sm"
-                                fontWeight="500"
-                                color="#FF5CAA"
-                                bg="transparent"
-                              >
-                                <Icon as={RiExternalLinkFill} />
-                              </Button>
-                            </Flex>
-                          </Td>
-                          <Td>
-                            <Button
-                              fontSize="sm"
-                              px="4"
-                              fontWeight="medium"
-                              bg="#FF5CAA"
-                              color="white"
-                              onClick={() => {
-                                setRemovePayer(payer.id);
-                                onOpenRemove();
-                              }}
-                              _hover={{ bg: "gray.300", color: "black" }}
-                            >
-                              Remove
-                            </Button>
-                          </Td>
-                        </>
-                      )}
-                    </Tr>
-                  );
-                })}
+                {payers.length > 0 ? (
+                  <>
+                    {payers?.map((payer, i) => {
+                      return (
+                        <Tr key={i}>
+                          {!payer.deleted && (
+                            <>
+                              <Td>
+                                <Flex gap="4" alignItems="center">
+                                  <Text textAlign="center">{payer.id}</Text>
+                                  <Button
+                                    onClick={() =>
+                                      window.open(
+                                        `https://iq.wiki/account/${payer.id}`,
+                                        "_blank"
+                                      )
+                                    }
+                                    size="sm"
+                                    fontWeight="500"
+                                    color="#FF5CAA"
+                                    bg="transparent"
+                                  >
+                                    <Icon as={RiExternalLinkFill} />
+                                  </Button>
+                                </Flex>
+                              </Td>
+                              <Td>
+                                <Button
+                                  fontSize="sm"
+                                  px="4"
+                                  fontWeight="medium"
+                                  bg="#FF5CAA"
+                                  color="white"
+                                  onClick={() => {
+                                    setRemovePayer(payer.id);
+                                    onOpenRemove();
+                                  }}
+                                  _hover={{ bg: "gray.300", color: "black" }}
+                                >
+                                  Remove
+                                </Button>
+                              </Td>
+                            </>
+                          )}
+                        </Tr>
+                      );
+                    })}
+                  </>
+                ) : (
+                  <>
+                    <Text pt="2" textAlign="center" w="full">
+                      No data to display
+                    </Text>
+                  </>
+                )}
               </Tbody>
             </Table>
           </chakra.div>
