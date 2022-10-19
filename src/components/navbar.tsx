@@ -14,7 +14,6 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import React, { useState, useEffect } from "react";
-import { config } from "../config/index";
 import { FaChevronDown } from "react-icons/fa";
 import NextLink from "next/link";
 import { NETWORK_DATA } from "../data/NetworkData";
@@ -24,6 +23,7 @@ import ProfileSubMenu from "./ProfileSubMenu";
 import { BraindaoLogo } from "../components/braindao-logo";
 import WalletConnect from "../components/WalletConnect";
 import { NetworkNotification } from "./Network/NetworkNotification";
+import { config } from "../config/index";
 
 export const Navbar = (props: FlexProps) => {
   const [openWalletConnect, setOpenWalletConnect] = useState<boolean>(false);
@@ -66,7 +66,7 @@ export const Navbar = (props: FlexProps) => {
           <Flex as="a" alignItems="center" gap="3" cursor="pointer">
             <BraindaoLogo />
             <Text fontWeight="bold" fontSize={{ base: "sm", md: "lg" }}>
-              Editors Payouts
+              {config.isTestnet && "Test "}Editors Payouts
             </Text>
           </Flex>
         </NextLink>
