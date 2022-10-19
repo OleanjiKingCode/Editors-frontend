@@ -107,7 +107,7 @@ function Lists({
     const addresses = [""];
     const tx = await Promise.all(
       ownerRecords.map(async (i) => {
-        addresses.push(i.Address);
+        addresses.push(i.address);
         return addresses;
       })
     );
@@ -337,10 +337,11 @@ function Lists({
                 </Tr>
               </Thead>
               <Tbody>
+                {payers.length}
                 {payers?.map((payer, i) => {
                   return (
                     <Tr key={i}>
-                      {!payer.Deleted && (
+                      {!payer.deleted && (
                         <>
                           <Td>
                             <Flex gap="4" alignItems="center">
