@@ -9,13 +9,10 @@ import {
   useDisclosure,
   Text,
 } from "@chakra-ui/react";
-import { utils } from "ethers";
-import config from "next/config";
 import React, { useEffect } from "react";
 import { networkMap } from "./NetworkData";
 import { FocusableElement } from "@chakra-ui/utils";
 import { RiErrorWarningFill, RiCloseLine } from "react-icons/ri";
-import { useConnect } from "wagmi";
 
 export const NetworkNotification = ({
   onClose,
@@ -25,7 +22,7 @@ export const NetworkNotification = ({
   onClose: () => void;
 }) => {
   const cancelRef = React.useRef<FocusableElement>(null);
-  const { chainId, chainName, rpcUrls } = networkMap.MUMBAI_TESTNET;
+  const { chainId, chainName, rpcUrls } = networkMap.POLYGON_NET;
   const handleSwitchNetwork = async () => {
     try {
       await window.ethereum?.request({

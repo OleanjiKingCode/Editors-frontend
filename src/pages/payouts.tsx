@@ -65,6 +65,7 @@ function Payouts({
   payoutsData,
   payersData,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  console.log(payoutsData, payersData);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [loading, setLoading] = useState(false);
   const [isAnEditor, setIsAnEditor] = useState(false);
@@ -80,7 +81,7 @@ function Payouts({
 
   const [table, setTable] = useState<TableType[]>([]);
   const [updated, isUpdated] = useState(false);
- 
+
   const checkIfAddressIsEditor = async () => {
     const addresses = [""];
     const tx = await Promise.all(
@@ -325,11 +326,11 @@ function Payouts({
                       <>
                         <Td>
                           <Flex gap="4" alignItems="center">
-                            <Text textAlign="center">{payout.Receiver}</Text>
+                            <Text textAlign="center">{payout.receiver}</Text>
                             <Button
                               onClick={() =>
                                 window.open(
-                                  `${config.mumbaiScan}address/${payout.Receiver}`,
+                                  `${config.Scan}address/${payout.receiver}`,
                                   "_blank"
                                 )
                               }
@@ -342,13 +343,13 @@ function Payouts({
                             </Button>
                           </Flex>
                         </Td>
-                        <Td>{dateConverter(payout.Date)}</Td>
-                        <Td>{payout.Rewards}</Td>
+                        <Td>{dateConverter(payout.date)}</Td>
+                        <Td>{payout.rewards}</Td>
                         <Td>
                           <Button
                             onClick={() =>
                               window.open(
-                                `${config.mumbaiScan}tx/${payout.transactionHash}`,
+                                `${config.Scan}tx/${payout.transactionHash}`,
                                 "_blank"
                               )
                             }

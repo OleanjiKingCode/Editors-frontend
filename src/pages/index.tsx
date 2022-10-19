@@ -30,10 +30,9 @@ function Home({
   payoutsData,
   editorsData,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  console.log(payoutsData)
+  console.log(payoutsData, editorsData);
   return (
     <div>
-     
       <Head>
         <title>IQ Payouts</title>
         <meta name="description" content="IQ Editors Payouts" />

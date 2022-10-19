@@ -1,11 +1,11 @@
 export const GET_PAYOUTS_LISTS = `
 query($skip:Int){
-    payoutsRecords(first:5 skip:$skip orderBy:Rewards orderDirection:desc){
+    payoutsRecords(first:5 skip:$skip orderBy:rewards orderDirection:desc){
         id
-        Sender
-        Receiver
-        Date
-        Rewards
+        sender
+        receiver
+        date
+        rewards
         tokenAddress
         transactionHash
     }
@@ -14,10 +14,10 @@ query($skip:Int){
 
 export const GET_PAYERS_LISTS = `
 query ($skip:Int){
-    payers(first:5 skip:$skip orderBy:Date orderDirection:desc){
+    payers(first:5 skip:$skip orderBy:date orderDirection:desc){
         id
-        Deleted
-        Date 
+        deleted
+        date 
     }
 }
 `;
@@ -34,6 +34,6 @@ export const GET_OWNER = `
 query {
     owners (first:1) {
         id
-        Address
+        address
       }
 }`;
