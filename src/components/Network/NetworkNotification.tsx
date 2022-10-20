@@ -13,6 +13,7 @@ import React, { useEffect } from "react";
 import { networkMap } from "./NetworkData";
 import { FocusableElement } from "@chakra-ui/utils";
 import { RiErrorWarningFill, RiCloseLine } from "react-icons/ri";
+import { config } from "../../config";
 
 export const NetworkNotification = ({
   onClose,
@@ -86,8 +87,10 @@ export const NetworkNotification = ({
           </Flex>
           <Text mt="6" w="90%" lineHeight="2">
             Your wallet is currently connected to an unsupported network. To
-            continue with Polygon network, Switch the network in your wallet to
-            Polygon.
+            continue with{" "}
+            {config.isTestnet ? "Polygon Mumbai" : "Polygon Mainnet"}, Switch
+            the network in your wallet to
+            {config.isTestnet ? "mumbai" : "Polygon Mainnet"}.
           </Text>
           <Text mt="6" w="90%" lineHeight="2">
             Switch wallet if unable to change wallet network.
