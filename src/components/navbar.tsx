@@ -66,7 +66,8 @@ export const Navbar = (props: FlexProps) => {
           <Flex as="a" alignItems="center" gap="3" cursor="pointer">
             <BraindaoLogo />
             <Text fontWeight="bold" fontSize={{ base: "sm", md: "lg" }}>
-              {config.isTestnet && "Test "}Editors Payouts
+              {/* {config.isTestnet && "Test "} */}
+              Editors Payouts
             </Text>
           </Flex>
         </NextLink>
