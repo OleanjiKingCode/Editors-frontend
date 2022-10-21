@@ -20,6 +20,8 @@ import {
   Area,
   AreaChart,
   CartesianGrid,
+  Line,
+  LineChart,
 } from "recharts";
 import { MdArrowDropDown } from "react-icons/md";
 
@@ -70,26 +72,17 @@ export const PayoutsGraph = ({
         </Flex>
         <Box p={5}>
           <ResponsiveContainer width="100%" height={300}>
-            <AreaChart width={730} height={250} data={data}>
+            <LineChart width={730} height={250} data={data}>
+              <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="name" />
               <YAxis />
-              <defs>
-                <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor={createdFill} stopOpacity={0.3} />
-                  <stop offset="95%" stopColor={createdFill} stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="0" vertical={false} />
 
-              <Area
+              <Line
                 type="monotone"
                 dataKey="Payouts Made"
-                strokeWidth="2"
-                opacity="1"
                 stroke={createdStroke}
-                fill="url(#colorUv)"
-                fillOpacity={1}
               />
+
               <Tooltip
                 contentStyle={{
                   borderRadius: "20px",
@@ -97,7 +90,7 @@ export const PayoutsGraph = ({
                   border: "0px",
                 }}
               />
-            </AreaChart>
+            </LineChart>
           </ResponsiveContainer>
         </Box>
       </Box>
