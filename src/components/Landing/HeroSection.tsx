@@ -7,6 +7,7 @@ import {
   VStack,
   Stack,
   chakra,
+  Box,
 } from "@chakra-ui/react";
 
 export const HeroSection = () => {
@@ -65,7 +66,9 @@ export const HeroSection = () => {
           </Button>
         </ButtonGroup>
       </VStack>
-      {/* <HeroCard wiki={wiki} /> */}
+      {/* <Box>
+        <img src="./card.png" />
+      </Box> */}
     </Stack>
   );
 };
