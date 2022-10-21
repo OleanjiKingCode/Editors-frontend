@@ -1,6 +1,7 @@
 export const config = {
   alchemyChain: String(process.env.ALCHEMY_CHAIN),
   isTestnet: true,
+  ensRPC: String(process.env.NEXT_PUBLIC_ENS_RPC),
   chainId: process.env.CHAIN_ID,
   chainName: String(process.env.CHAIN_NAME),
   payoutsContractAddress:
