@@ -71,9 +71,9 @@ export const PayoutsGraph = ({
           </Select>
         </Flex>
         <Box p={5}>
-          <ResponsiveContainer width="100%" height={300}>
+          <ResponsiveContainer width="100%" height="100%">
             <LineChart width={730} height={250} data={data}>
-              <CartesianGrid strokeDasharray="3 3" />
+              <CartesianGrid strokeDasharray="3 3" vertical={false} />
               <XAxis dataKey="name" />
               <YAxis />
 
