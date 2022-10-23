@@ -30,6 +30,14 @@ query {
   }
 }`;
 
+export const GET_EDITORS_DATE_LIST = `
+query {
+ editors{
+    id
+    totalRewards
+  }
+}`;
+
 export const GET_OWNER = `
 query {
     owners (first:1) {
