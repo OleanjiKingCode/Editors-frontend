@@ -71,18 +71,26 @@ export const PayoutsGraph = ({
           </Select>
         </Flex>
         <Box p={5}>
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart width={730} height={250} data={data}>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} />
+          <ResponsiveContainer width="100%" height={300}>
+            <AreaChart width={730} height={250} data={data}>
               <XAxis dataKey="name" />
               <YAxis />
-
-              <Line
+              <defs>
+                <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor={createdFill} stopOpacity={0.3} />
+                  <stop offset="95%" stopColor={createdFill} stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="0" vertical={false} />
+              <Area
                 type="monotone"
                 dataKey="Payouts Made"
+                strokeWidth="2"
+                opacity="1"
                 stroke={createdStroke}
+                fill="url(#colorUv)"
+                fillOpacity={1}
               />
-
               <Tooltip
                 contentStyle={{
                   borderRadius: "20px",
@@ -90,7 +98,7 @@ export const PayoutsGraph = ({
                   border: "0px",
                 }}
               />
-            </LineChart>
+            </AreaChart>
           </ResponsiveContainer>
         </Box>
       </Box>
