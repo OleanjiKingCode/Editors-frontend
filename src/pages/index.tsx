@@ -8,7 +8,7 @@ import { GET_PAYOUTS_LISTS, GET_EDITORS_LIST } from "../components/Queries";
 import { config } from "../config";
 import { Stats } from "../components/Landing/stats";
 import { PayoutsGraph } from "../components/Landing/PayoutsGraph";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import shortenAccount from "../utils/shortenAccount";
 const client = createClient({
   url: config.payoutsGraphApi,
@@ -16,9 +16,7 @@ const client = createClient({
 
 export const getServerSideProps = async () => {
   const info = await client.query(GET_PAYOUTS_LISTS, {}).toPromise();
-  const editorsInfo = await client
-    .query(GET_EDITORS_LIST, {})
-    .toPromise();
+  const editorsInfo = await client.query(GET_EDITORS_LIST, {}).toPromise();
   const data: PAYOUTS_LIST[] = info.data?.payoutsRecords;
   const editorsdata: EDITORS_LIST[] = editorsInfo.data?.editors;
   return {
@@ -38,6 +36,7 @@ function Home({
     name: string | undefined;
     Payouts: number | undefined;
   }> = [];
+
   if (graphFilter === "All time") {
     editorsData.map((item) => {
       dataObj.push({
