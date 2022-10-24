@@ -37,7 +37,6 @@ export const PayoutsGraph = ({
   handleGraphFilterChange: any;
 }) => {
   const currentYear = new Date().getFullYear();
-
   const createdStroke = useColorModeValue("#FF5CAA", "#FF1A88");
   const toolTipBg = useColorModeValue("#ffffff", "#1A202C");
   return (
