@@ -1,6 +1,6 @@
 import Head from "next/head";
 import { HeroSection } from "../components/Landing/HeroSection";
-import { chakra, Flex } from "@chakra-ui/react";
+import { chakra, Flex, Box } from "@chakra-ui/react";
 import { InferGetServerSidePropsType } from "next";
 import { createClient } from "urql";
 import { PAYOUTS_LIST, EDITORS_LIST } from "../types/payoutsType";
@@ -8,7 +8,7 @@ import { GET_PAYOUTS_LISTS, GET_EDITORS_LIST } from "../components/Queries";
 import { config } from "../config";
 import { Stats } from "../components/Landing/stats";
 import { PayoutsGraph } from "../components/Landing/PayoutsGraph";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 const client = createClient({
   url: config.payoutsGraphApi,
 });
@@ -53,19 +53,21 @@ function Home({
         <link rel="icon" href="" />
       </Head>
       <Flex direction="column" mx="auto" w="full">
-        <chakra.div pt={{ base: 6, lg: 20 }}>
-          <HeroSection />
-          <Stats
-            editorsData={editorsData ? editorsData : []}
-            payoutsData={payoutsData ? payoutsData : []}
+        <Box bgImage="/homepage-bg-white.png">
+          <chakra.div pt={{ base: 6, lg: 20 }}>
+            <HeroSection />
+            <Stats
+              editorsData={editorsData ? editorsData : []}
+              payoutsData={payoutsData ? payoutsData : []}
+            />
+          </chakra.div>
+          <PayoutsGraph
+            data={data}
+            handleGraphFilterChange={(e: string) => {
+              return setGraphFilter(e);
+            }}
           />
-        </chakra.div>
-        <PayoutsGraph
-          data={data}
-          handleGraphFilterChange={(e: string) => {
-            return setGraphFilter(e);
-          }}
-        />
+        </Box>
       </Flex>
     </div>
   );

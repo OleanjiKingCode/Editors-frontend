@@ -41,12 +41,22 @@ export const PayoutsGraph = ({
   const currentYear = new Date().getFullYear();
   const createdStroke = useColorModeValue("#FF5CAA", "#FF1A88");
   const toolTipBg = useColorModeValue("#ffffff", "#1A202C");
+  const obj: Array<{
+    name: string;
+    Payouts: number | undefined;
+  }> = [];
+  data.map((item) => {
+    obj.push({
+      name: shortenAccount(item.name),
+      Payouts: item.Payouts,
+    });
+  });
   const [realData, setRealData] = useState<
     Array<{
       name: string;
       Payouts: number | undefined;
     }>
-  >([]);
+  >(obj);
 
   const fetchEnsNames = async () => {
     const promises = data.map(async (item) => {
@@ -56,13 +66,12 @@ export const PayoutsGraph = ({
         Payouts: item.Payouts,
       };
     });
-
     const results = await Promise.all(promises);
     setRealData(results);
   };
-  useEffect(() => {
-    fetchEnsNames();
-  });
+
+  fetchEnsNames();
+
   return (
     <Flex gap={4} py="4" w="full" flexDir={{ base: "column", lg: "row" }}>
       <Box rounded="xl" borderWidth="1px" p={4} w="full">
