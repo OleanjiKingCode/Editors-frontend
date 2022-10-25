@@ -163,7 +163,6 @@ function Payouts({
       let temporaryTable: TableType = { address, amount };
 
       setTable([...table, { ...temporaryTable }]);
-      console.log(table);
     }
   };
 
@@ -184,7 +183,6 @@ function Payouts({
           addresses.push(td.address);
           let newAmount = utils.parseUnits(td.amount);
           amounts.push(newAmount);
-          console.log(addresses, amounts);
         } else {
           let toastTitle = "  Please fill the fields with valid data";
           toast({
