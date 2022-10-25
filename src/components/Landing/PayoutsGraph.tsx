@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Flex,
   VStack,
@@ -24,13 +24,15 @@ import {
   LineChart,
 } from "recharts";
 import { MdArrowDropDown } from "react-icons/md";
+import { provider } from "../../utils/getProvider";
+import shortenAccount from "../../utils/shortenAccount";
 
 export const PayoutsGraph = ({
   data,
   handleGraphFilterChange,
 }: {
   data: Array<{
-    name: string | undefined;
+    name: string;
     Payouts: number | undefined;
   }>;
 
@@ -39,6 +41,28 @@ export const PayoutsGraph = ({
   const currentYear = new Date().getFullYear();
   const createdStroke = useColorModeValue("#FF5CAA", "#FF1A88");
   const toolTipBg = useColorModeValue("#ffffff", "#1A202C");
+  const [realData, setRealData] = useState<
+    Array<{
+      name: string;
+      Payouts: number | undefined;
+    }>
+  >([]);
+
+  const fetchEnsNames = async () => {
+    const promises = data.map(async (item) => {
+      const response = await provider.lookupAddress(item.name);
+      return {
+        name: response == null ? shortenAccount(item.name) : response,
+        Payouts: item.Payouts,
+      };
+    });
+
+    const results = await Promise.all(promises);
+    setRealData(results);
+  };
+  useEffect(() => {
+    fetchEnsNames();
+  });
   return (
     <Flex gap={4} py="4" w="full" flexDir={{ base: "column", lg: "row" }}>
       <Box rounded="xl" borderWidth="1px" p={4} w="full">
@@ -65,11 +89,11 @@ export const PayoutsGraph = ({
           </Select>
         </Flex>
         <Flex>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart width={600} height={250} data={data}>
+          <ResponsiveContainer width="100%" aspect={3}>
+            <LineChart width={600} height={250} data={realData}>
               <CartesianGrid strokeDasharray="3 3" vertical={false} />
-              <XAxis dataKey="name" />
-              <YAxis />
+              <XAxis dataKey="name" fontSize={12} fontWeight="bold" />
+              <YAxis fontSize={12} fontWeight="bold" />
 
               <Line
                 type="monotone"

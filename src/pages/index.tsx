@@ -9,7 +9,6 @@ import { config } from "../config";
 import { Stats } from "../components/Landing/stats";
 import { PayoutsGraph } from "../components/Landing/PayoutsGraph";
 import { useEffect, useState } from "react";
-import shortenAccount from "../utils/shortenAccount";
 const client = createClient({
   url: config.payoutsGraphApi,
 });
@@ -32,15 +31,15 @@ function Home({
   editorsData,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const [graphFilter, setGraphFilter] = useState<string>("All time");
-  const dataObj: Array<{
-    name: string | undefined;
+  const data: Array<{
+    name: string;
     Payouts: number | undefined;
   }> = [];
 
   if (graphFilter === "All time") {
     editorsData.map((item) => {
-      dataObj.push({
-        name: shortenAccount(item.id),
+      data.push({
+        name: item.id,
         Payouts: parseInt(item.totalRewards.toString()),
       });
     });
@@ -62,7 +61,7 @@ function Home({
           />
         </chakra.div>
         <PayoutsGraph
-          data={dataObj}
+          data={data}
           handleGraphFilterChange={(e: string) => {
             return setGraphFilter(e);
           }}
