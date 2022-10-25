@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {useState } from "react";
 import {
   Flex,
   VStack,
@@ -13,12 +13,6 @@ import {
   XAxis,
   YAxis,
   Tooltip,
-  Legend,
-  PieChart,
-  Pie,
-  Cell,
-  Area,
-  AreaChart,
   CartesianGrid,
   Line,
   LineChart,
