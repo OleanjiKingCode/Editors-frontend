@@ -1,4 +1,4 @@
-import React, {useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Flex,
   VStack,
@@ -35,22 +35,12 @@ export const PayoutsGraph = ({
   const currentYear = new Date().getFullYear();
   const createdStroke = useColorModeValue("#FF5CAA", "#FF1A88");
   const toolTipBg = useColorModeValue("#ffffff", "#1A202C");
-  const obj: Array<{
-    name: string;
-    Payouts: number | undefined;
-  }> = [];
-  data.map((item) => {
-    obj.push({
-      name: shortenAccount(item.name),
-      Payouts: item.Payouts,
-    });
-  });
   const [realData, setRealData] = useState<
     Array<{
       name: string;
       Payouts: number | undefined;
     }>
-  >(obj);
+  >(data);
 
   const fetchEnsNames = async () => {
     const promises = data.map(async (item) => {
@@ -64,7 +54,9 @@ export const PayoutsGraph = ({
     setRealData(results);
   };
 
-  fetchEnsNames();
+  useEffect(() => {
+    fetchEnsNames();
+  });
 
   return (
     <Flex gap={4} py="4" w="full" flexDir={{ base: "column", lg: "row" }}>
